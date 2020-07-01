@@ -49,14 +49,13 @@ if (isset($_POST['add_teacher'])) {
     $email = $_POST['email'];
     $nationality = $_POST['nationality'];
     $teacher_id = $_POST['teacher_id'];
-    $password = $_POST['password'];
     $dob = $_POST['dob'];
     $gender = $_POST['gender'];
     $qualification = $_POST['qualification'];
     $experience = $_POST['experience'];
 
    $addTeacher = new Staff();
-   $addTeacher->addTeacher($image_Path, $firstname, $lastname, $email, $nationality, $teacher_id, $password, $dob, $gender, $qualification, $experience);
+   $addTeacher->addTeacher($image_Path, $firstname, $lastname, $email, $nationality, $teacher_id, $dob, $gender, $qualification, $experience);
 }
 
 
@@ -72,7 +71,7 @@ if (isset($_POST['add_teacher'])) {
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>MRC | Add Teacher</title>
+  <title>Add Teacher | MRC</title>
 
   <!-- Custom fonts for this template-->
   <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -170,23 +169,21 @@ if (isset($_POST['add_teacher'])) {
               <div class="form-group">
                 <label for="exampleInputEmail1">Teacher ID:</label>
                 <input type="text" name="teacher_id" class="form-control"  placeholder="Enter Teacher ID" required="">
-                <small style="color: red;">This will be used as username</small>
+                <small style="color: red;">This will be used as Username and Password</small>
               </div>
-  <div class="form-row">
-    <div class="col-md-8 mb-3">
-      <label for="validationTooltip03">Qualification</label>
-      <input type="text" name="qualification" class="form-control" id="validationTooltip03" placeholder="E.g Degree" required>
 
-    </div>
-    <div class="col-md-4 mb-3">
-      <label for="">Experience</label>
-      <input type="number" min="0" max="70" name="experience" class="form-control" id="" placeholder="E.g 5" required>
-    </div>
-  </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">Password</label>
-                <input type="password" name="password" class="form-control" placeholder="Password" required="">
+              <div class="form-row">
+                <div class="col-md-8 mb-3">
+                  <label for="validationTooltip03">Qualification</label>
+                  <input type="text" name="qualification" class="form-control" id="validationTooltip03" placeholder="E.g Degree" required>
+
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="">Experience</label>
+                  <input type="number" min="0" max="70" name="experience" class="form-control" id="" placeholder="E.g 5" required>
+                </div>
               </div>
+
               <div class="row">
                 <div class="col">
                   <label for="inputEmail4">Date of Birth</label>
@@ -195,7 +192,6 @@ if (isset($_POST['add_teacher'])) {
                 <div class="col">
                   <label for="inputEmail4">Select Gender</label>
                   <select name="gender" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
-                    <option selected>Gender...</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                   </select>

@@ -97,7 +97,7 @@ $deleteStudent = $deleteStudent->deleteStudent($id);
                       <th>Name</th>
                       <th>Date of Birth</th>
                       <th>Gender</th>
-                      <th>Nationality</th>
+                      <th>Class Name</th>
                       <th>Email</th>
                       <th>Date Added</th>
                       <th>Action</th>
@@ -111,7 +111,7 @@ $deleteStudent = $deleteStudent->deleteStudent($id);
                       <td><?php echo $student['name']; ?></td>
                       <td><?php echo $student['dob']; ?></td>
                       <td><?php echo $student['gender']; ?></td>
-                      <td><?php echo $student['nationality']; ?></td>
+                      <td><?php echo $student['class_name']; ?></td>
                       <td><?php echo $student['email']; ?></td>
                       <td><?php $date = date_create($student['date_added']); echo date_format($date,"d, M Y"); ?></td>
                       <td><i class="fas fa-trash text-gray-800"></i> <a href="#">Delete</a></td>

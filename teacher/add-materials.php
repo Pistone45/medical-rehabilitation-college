@@ -1,7 +1,54 @@
 <?php
 include_once '../functions/functions.php';
+if(!isset($_SESSION['user'])){
+    header("Location: ../login.php");
+    exit;
+}
+
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
+
+$getAllClasses = new User();
+$classes = $getAllClasses-> getAllClasses();
+
+if (isset($_POST['submit'])) {
+  $statusMsg = '';
+  //file upload path
+  $targetDir = "../materials/";
+  $fileName = basename($_FILES["file"]["name"]);
+  $targetFilePath = $targetDir . $fileName;
+  $fileType = pathinfo($targetFilePath,PATHINFO_EXTENSION);
+
+  if(isset($_POST["submit"]) && !empty($_FILES["file"]["name"])) {
+      //allow certain file formats
+      $allowTypes = array('docx','pdf');
+      if(in_array($fileType, $allowTypes)){
+          //upload file to server
+          if(move_uploaded_file($_FILES["file"]["tmp_name"], $targetFilePath)){
+              //$statusMsg = "The file ".$fileName. " has been uploaded.";
+            $getCurrentSettings = new Settings();
+            $settings = $getCurrentSettings-> getCurrentSettings();
+            $year = $settings['year'];
+            $semester_id = $settings['semester_id'];
+            $material = $targetFilePath;
+            $classes_id = $_POST['class_id'];
+            $modules_id = $_POST['modules_id'];
+            $title = $_POST['title'];
+
+            $addMaterial = new Teacher();
+            $addMaterial = $addMaterial->addMaterial($title, $material, $modules_id, $classes_id, $year, $semester_id);
+
+          }else{
+              $_SESSION['error']=true;
+          }
+      }else{
+          $_SESSION['type_mismatch']=true;
+      }
+  }else{
+      //$statusMsg = 'Please select a file to upload.';
+  }
+
+}
 
 
 ?>
@@ -16,7 +63,7 @@ $user_details = $getUserProfile-> getUserProfile();
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Dashboard</title>
+  <title>Add Materials | MRC</title>
 
   <!-- Custom fonts for this template-->
   <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -57,42 +104,124 @@ $user_details = $getUserProfile-> getUserProfile();
         <!-- /.container-fluid -->
 
 <div class="row container-fluid">
-  <div class="col-md-1"></div>
-  <div class="col-md-10">
+  <div class="col-md-7">
 
   <!-- Basic Card Example -->
     <div class="card shadow mb-4">
       <div class="card-body">
-        <form>
+      <?php
+            if(isset($_SESSION["material_added"]) && $_SESSION["material_added"]==true)
+                  { ?>
+            <div class="alert alert-success" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Success! </strong> You have Successfully Added a Learning Material for This Class and Module
+            </div>  <?php
+            unset($_SESSION["material_added"]);
+            header('Refresh: 5; URL= view-materials.php');
+                      }
+              ?>
+            <?php
+            if(isset($_SESSION["type_mismatch"]) && $_SESSION["type_mismatch"]==true)
+                  { ?>
+            <div class="alert alert-danger" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Wrog file Type! </strong> Only PDF and Word Documents are allowed
+            </div>  <?php
+            unset($_SESSION["type_mismatch"]);
+                      }
+              ?>
+            <?php
+            if(isset($_SESSION["error"]) && $_SESSION["error"]==true)
+                  { ?>
+            <div class="alert alert-danger" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Error! </strong> There was an error uploading the file. Contact the Admin
+            </div>  <?php
+            unset($_SESSION["error"]);
+                      }
+              ?>
+            <?php
+            if(isset($_SESSION["material_present"]) && $_SESSION["material_present"]==true)
+                  { ?>
+            <div class="alert alert-warning" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Material Present </strong> The Material for this Class and Subject is already Present
+            </div>  <?php
+            unset($_SESSION["material_present"]);
+                      }
+              ?>
+        <form action="add-materials.php" method="POST" enctype="multipart/form-data">
         <label>Select Class</label>
-        <select class="custom-select">
-          <option selected>Select Class</option>
-          <option value="1">Vipya</option>
-          <option value="2">Nyika</option>
-        </select>
+          <select class="custom-select" name="class_id" onchange="showModule(this.value)" id="class_id" required="">
+              <option style="color: black;" selected="">Select Class.....</option>
+            <?php
+              if(isset($classes) && count($classes)>0){
+                foreach($classes as $class){ ?>
+                  <option value="<?php echo $class['id']; ?>"><?php echo $class['name']; ?></option>
+                <?php
+                  
+                }
+              }
+            ?>
+          </select>
         <br><br>
+
         <label>Select Subject</label>
-        <select class="custom-select">
-          <option selected>Select Subject</option>
-          <option value="1">Mathematics</option>
-          <option value="2">Biology</option>
-          <option value="3">English</option>
+        <select class="custom-select" name="modules_id" id="module_name" required="">
+          <option VALUE="">Select Module</option>  
         </select>
         <br><br>
+
+        <div class="form-group">
+          <label for="inputAddress">Title</label>
+          <input type="text" name="title" class="form-control" id="inputAddress" placeholder="Enter Material Title" required="">
+        </div>
+
         <label>Material</label>
-        <input class="form-control" name="grade" type="file" placeholder="Enter Grade">
-        <small>PDF format</small>
-        <br>
-        <button class="btn btn-success">Submit</button>
+        <div class="custom-file">
+          <input type="file" name="file" class="custom-file-input" required>
+          <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
+          <div class="invalid-feedback">Please Select Material</div>
+        </div>
+        <br><br>
+        <button type="submit" name="submit" class="btn btn-success"><i class="fas fa-plus"></i> Add Material <i class="fas fa-paperclip"></i></button>
         </form>
       </div>
     </div>
     <!--End of Basic Card Example -->
 
   </div>
-  <div class="col-md-1"></div>
+  <div class="col-md-5">
+    <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 28rem;" src="../images/undraw_attached_file_n4wm.svg" alt="">
+  </div>
 </div>
 
-      </div>
-      <!-- End of Main Content -->
+</div>
+<!-- End of Main Content -->
+<style type="text/css">
+  label{color: black;}
+</style>
+<script type="text/javascript">
+    window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove(); 
+    });
+}, 4000);
+  </script>
+
+<script type="text/javascript">
+function showModule(val) {
+  // alert(val);
+  $.ajax({
+  type: "POST",
+  url: "filter-results.php",
+  data:'class_id='+val,
+  success: function(data){
+    // alert(data);
+    $("#module_name").html(data);
+  }
+  });
+  
+}
+</script>
 <?php include 'footer.php';  ?>

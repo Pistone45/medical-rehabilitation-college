@@ -49,7 +49,6 @@ if (isset($_POST['add_accountant'])) {
     $email = $_POST['email'];
     $nationality = $_POST['nationality'];
     $staff_id = $_POST['staff_id'];
-    $password = $_POST['password'];
     $dob = $_POST['dob'];
     $gender = $_POST['gender'];
     $qualification = $_POST['qualification'];
@@ -57,7 +56,7 @@ if (isset($_POST['add_accountant'])) {
     $phone = $_POST['phone'];
 
    $addAccountant = new Staff();
-   $addAccountant->addAccountant($image_Path, $firstname, $lastname, $email, $nationality, $staff_id, $password, $dob, $gender, $qualification, $experience, $phone);
+   $addAccountant->addAccountant($image_Path, $firstname, $lastname, $email, $nationality, $staff_id, $dob, $gender, $qualification, $experience, $phone);
 }
 
 ?>
@@ -171,7 +170,7 @@ if (isset($_POST['add_accountant'])) {
               <div class="col">
                 <label for="inputEmail4">Staff ID</label>
                 <input type="text" name="staff_id" class="form-control" placeholder="Enter Staff ID" required="">
-                <small style="color: red;">This will be used as username</small>
+                <small style="color: red;">This will be used as Username and Password</small>
                 </div>
                 <div class="col">
                 <label for="inputEmail4">Phone</label>
@@ -179,21 +178,19 @@ if (isset($_POST['add_accountant'])) {
                 </div>
               </div>
               <br>
-  <div class="form-row">
-    <div class="col-md-8 mb-3">
-      <label for="validationTooltip03">Qualification</label>
-      <input type="text" name="qualification" class="form-control" id="validationTooltip03" placeholder="E.g Degree" required>
 
-    </div>
-    <div class="col-md-4 mb-3">
-      <label for="">Experience</label>
-      <input type="number" min="0" max="70" name="experience" class="form-control" id="" placeholder="E.g 5" required>
-    </div>
-  </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">Password</label>
-                <input type="password" name="password" class="form-control" placeholder="Password" required="">
+              <div class="form-row">
+                <div class="col-md-8 mb-3">
+                  <label for="validationTooltip03">Qualification</label>
+                  <input type="text" name="qualification" class="form-control" id="validationTooltip03" placeholder="E.g Degree" required>
+
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="">Experience</label>
+                  <input type="number" min="0" max="70" name="experience" class="form-control" id="" placeholder="E.g 5" required>
+                </div>
               </div>
+
               <div class="row">
                 <div class="col">
                   <label for="inputEmail4">Date of Birth</label>
@@ -202,7 +199,6 @@ if (isset($_POST['add_accountant'])) {
                 <div class="col">
                   <label for="inputEmail4">Select Gender</label>
                   <select name="gender" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
-                    <option selected>Gender...</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                   </select>

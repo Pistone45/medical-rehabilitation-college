@@ -8,6 +8,9 @@ if(!isset($_SESSION['user'])){
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
 
+$getAllClasses = new User();
+$classes = $getAllClasses-> getAllClasses();
+
 if (isset($_POST['add_student'])) {
 
      if(isset($_FILES['student_picture'])){
@@ -48,13 +51,13 @@ if (isset($_POST['add_student'])) {
     $lastname = $_POST['lastname'];
     $email = $_POST['email'];
     $nationality = $_POST['nationality'];
-    $student_no = $_POST['student_no'];
-    $password = $_POST['password'];
+    $phone = $_POST['phone'];
     $dob = $_POST['dob']; 
     $gender = $_POST['gender'];
+    $class_id = $_POST['class_id'];
 
    $addStudent = new Students();
-   $addStudent->addStudent($image_Path, $firstname, $lastname, $email, $nationality, $student_no, $password, $dob, $gender);
+   $addStudent->addStudent($image_Path, $firstname, $lastname, $email, $nationality, $phone, $dob, $gender, $class_id);
 }
 
 ?>
@@ -115,13 +118,13 @@ if (isset($_POST['add_student'])) {
     <div class="card shadow mb-4">
       <div class="card-body">
             <?php
-            if(isset($_SESSION["student_found"]) && $_SESSION["student_found"]==true)
+            if(isset($_SESSION["failed"]) && $_SESSION["failed"]==true)
                   { ?>
             <div class="alert alert-danger" role="alert">
               <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <strong>Student Already Exist! </strong> Student is present in the system
+              <strong>Registration Failed! </strong> Failed to register student. Contact the Admin
             </div>  <?php
-            unset($_SESSION["student_found"]);
+            unset($_SESSION["failed"]);
                       }
               ?>
             <?php
@@ -147,6 +150,7 @@ if (isset($_POST['add_student'])) {
                 </div>
               </div>
               <br>
+
               <div class="row">
                 <div class="col">
                   <label for="inputEmail4">Email</label>
@@ -158,6 +162,20 @@ if (isset($_POST['add_student'])) {
                 </div>
               </div>
               <br>
+              <label>Select Class</label>
+              <select class="custom-select" name="class_id" required="">
+              <?php
+                if(isset($classes) && count($classes)>0){
+                  foreach($classes as $class){ ?>
+                    <option value="<?php echo $class['id']; ?>"><?php echo $class['name']; ?></option>
+                  <?php
+                    
+                  }
+                }
+              ?>
+              </select>
+
+              <br><br>
               <div class="custom-file">
                 <input type="file" name="student_picture" class="custom-file-input" id="customFile" required="">
                 <label class="custom-file-label" for="customFile">Choose Student Picture</label>
@@ -165,13 +183,8 @@ if (isset($_POST['add_student'])) {
               <br>
               <br>
               <div class="form-group">
-                <label for="exampleInputEmail1">Student No:</label>
-                <input type="text" name="student_no" class="form-control"  placeholder="Enter Student Number" required="">
-                <small style="color: red;">This will be used as username</small>
-              </div>
-              <div class="form-group">
-                <label for="exampleInputPassword1">Password</label>
-                <input type="password" name="password" class="form-control" placeholder="Password" required="">
+                <label for="exampleInputEmail1">Phone Number:</label>
+                <input type="phone" name="phone" class="form-control"  placeholder="Enter Phone Number" required="">
               </div>
               <div class="row">
                 <div class="col">
@@ -181,7 +194,6 @@ if (isset($_POST['add_student'])) {
                 <div class="col">
                   <label for="inputEmail4">Select Gender</label>
                   <select name="gender" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
-                    <option selected>Gender...</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                   </select>
@@ -198,6 +210,17 @@ if (isset($_POST['add_student'])) {
   <div class="col-md-1"></div>
 </div>
 
-      </div>
-      <!-- End of Main Content -->
+</div>
+<!-- End of Main Content -->
+
+<style type="text/css">
+  label{color: black;}
+</style>
+
+<script>
+if ( window.history.replaceState ) {
+  window.history.replaceState( null, null, window.location.href );
+}
+</script>
+
 <?php include 'footer.php';  ?>

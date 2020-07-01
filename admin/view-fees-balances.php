@@ -70,16 +70,6 @@ $balances = $getStudentsBalances->getStudentsBalances();
   <!-- Basic Card Example -->
     <div class="card shadow mb-4">
       <div class="card-body">
-                    <?php
-            if(isset($_SESSION["balance-recorded"]) && $_SESSION["balance-recorded"]==true)
-                  { ?>
-            <div class="alert alert-success" role="alert">
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <strong>Success! </strong> You have Successfully recorded fees Balance for a Student
-            </div>  <?php
-            unset($_SESSION["balance-recorded"]);
-                      }
-              ?>
               <div class="table-responsive">
         <?php
         if(isset($balances) && count($balances)>0){

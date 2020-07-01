@@ -1,8 +1,39 @@
 <?php
 include_once '../functions/functions.php';
+if(!isset($_SESSION['user'])){
+    header("Location: ../login.php");
+    exit;
+}
+
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
 
+if (isset($_POST['filter'])) {
+  $class_id = $_POST['class_id'];
+  $modules_id = $_POST['modules_id'];
+  $getStudentsPerClass = new Teacher();
+  $students = $getStudentsPerClass->getStudentsPerClass($class_id);
+
+  $getModuleName = new Teacher();
+  $module = $getModuleName->getModuleName($modules_id);
+}
+
+if (isset($_POST['record'])) {
+$grade = $_POST['grade'];
+$student_no = $_POST['student_no'];
+$class_id = $_POST['class_id'];
+$modules_id = $_POST['modules_id'];
+
+$getCurrentSettings = new Settings();
+$settings = $getCurrentSettings-> getCurrentSettings();
+$year = $settings['year'];
+$semester_id = $settings['semester_id'];
+$modules_id = $_POST['modules_id'];
+
+$recordGrade = new Teacher();
+$recordGrade = $recordGrade->recordGrade($grade, $student_no, $class_id, $year, $semester_id, $modules_id);
+
+}
 
 ?>
 <!DOCTYPE html>
@@ -16,7 +47,7 @@ $user_details = $getUserProfile-> getUserProfile();
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Dashboard</title>
+  <title>Record Grades | MRC</title>
 
   <!-- Custom fonts for this template-->
   <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -44,55 +75,109 @@ $user_details = $getUserProfile-> getUserProfile();
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb float-right">
     <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Add Grades</li>
+    <li class="breadcrumb-item active" aria-current="page">Record Grades</li>
   </ol>
 </nav>
         <div class="container-fluid">
 
           <!-- Page Heading -->
-          <h1 class="h3 mb-4 text-gray-800">Add Grades</h1>
+          <h1 class="h3 mb-4 text-gray-800">Record Grades</h1>
           
 
         </div>
         <!-- /.container-fluid -->
 
 <div class="row container-fluid">
-  <div class="col-md-1"></div>
-  <div class="col-md-10">
+  <div class="col-md-0"></div>
+  <div class="col-md-12">
 
   <!-- Basic Card Example -->
     <div class="card shadow mb-4">
       <div class="card-body">
-        <form>
-        <label>Select Student to Enter grade</label>
-        <select class="custom-select">
-          <option selected>Select Student</option>
-          <option value="1">Student 1</option>
-          <option value="2">Student 2</option>
-          <option value="3">Student 3</option>
-        </select>
-        <br><br>
-        <label>Select Subject</label>
-        <select class="custom-select">
-          <option selected>Select Subject</option>
-          <option value="1">Mathematics</option>
-          <option value="2">Biology</option>
-          <option value="3">English</option>
-        </select>
-        <br><br>
-        <label>Grade</label>
-        <input class="form-control" name="grade" type="text" placeholder="Enter Grade">
-        <br>
-        <button class="btn btn-success">Submit</button>
-        </form>
+          <?php
+            if(isset($_SESSION["grade_recorded"]) && $_SESSION["grade_recorded"]==true)
+                  { ?>
+            <div class="alert alert-success" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Success! </strong> You have Successfully recorded a Grade for This Class and Module
+            </div>  <?php
+            unset($_SESSION["grade_recorded"]);
+            header('Refresh: 5; URL= filter-view-grades.php');
+                      }
+              ?>
+            <?php
+            if(isset($_SESSION["grade_present"]) && $_SESSION["grade_present"]==true)
+                  { ?>
+            <div class="alert alert-danger" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Failed! </strong> You have Already recorded a Grade for This Class and Module
+            </div>  <?php
+            unset($_SESSION["grade_present"]);
+            header('Refresh: 5; URL= filter-grades.php');
+                      }
+              ?>
+              <div class="table-responsive">
+        <?php
+        if(isset($students) && count($students)>0){
+        $i = 0; 
+          ?>
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>Student ID</th>
+                      <th>Name</th>
+                      <th>Module</th>
+                      <th>Class</th>
+                      <th>Grade</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+          <?php
+          foreach($students as $student){ 
+          $i ++;
+          ?>
+                    <tr>
+                      <td><?php echo $student['student_no']; ?></td>
+                      <td><?php echo $student['name']; ?></td>
+                      <td><?php echo $module['name']; ?></td>
+                      <td><?php echo $student['class_name']; ?></td>
+                      <form action="add-grades.php" method="POST">
+                      <td>
+              <div class="form-group">
+                <input type="number" min="0" max="100" name="grade[]"  class="form-control" id="formGroupExampleInput" placeholder="Enter Grade" required="">
+              </div>
+              <input type="text" hidden="" name="student_no[]" class="form-control" value="<?php echo $student['student_no']; ?>">
+                      </td>
+                    </tr>
+
+          <?php
+            
+          } ?>
+
+                  </tbody>
+                </table>
+  <input type="text" hidden="" name="modules_id" class="form-control" value="<?php if(isset($_POST['modules_id'])){ echo $modules_id = $_POST['modules_id'];} ?>">
+  <input type="text" hidden="" name="class_id" class="form-control" value="<?php if(isset($_POST['class_id'])){ echo $class_id = $_POST['class_id'];} ?>">
+  <button type="submit" name="record" class="btn btn-primary btn-block"><i class="far fa-clipboard"></i> Record Grades</button>
+
+    </form>
+                <?php
+                      }else {
+                        echo "No Students Available for this Class "; 
+                          ?> <a href="filter-grades.php"> <button class="btn btn-outline-primary">Back <i style="font-size: 18px;" class="fas fa-undo"></i></button></a> <?php
+                      }
+        ?>
+
+              </div>
       </div>
     </div>
     <!--End of Basic Card Example -->
 
   </div>
-  <div class="col-md-1"></div>
+  <div class="col-md-0"></div>
 </div>
 
-      </div>
-      <!-- End of Main Content -->
+</div>
+<!-- End of Main Content -->
+
 <?php include 'footer.php';  ?>

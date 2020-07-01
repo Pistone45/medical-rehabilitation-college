@@ -38,8 +38,8 @@
         <div id="collapsegrades" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Manage Grades:</h6>
-            <a class="collapse-item" href="add-grades.php">Add Grages</a>
-            <a class="collapse-item" href="view-grades.php">View Grades</a>
+            <a class="collapse-item" href="filter-grades.php"><i class="far fa-clipboard"></i> Add Grages</a>
+            <a class="collapse-item" href="filter-view-grades.php"><i class="fas fa-binoculars"></i> View Grades</a>
           </div>
         </div>
       </li>
@@ -53,8 +53,8 @@
         <div id="collapsematerials" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Manage Learning Materials:</h6>
-            <a class="collapse-item" href="add-materials.php">Add Materials</a>
-            <a class="collapse-item" href="view-materials.php">View Materials</a>
+            <a class="collapse-item" href="add-materials.php"><i class="fas fa-paperclip"></i> Add Materials</a>
+            <a class="collapse-item" href="filter-materials.php"><i class="fas fa-binoculars"></i> View Materials</a>
           </div>
         </div>
       </li>

@@ -1,8 +1,26 @@
 <?php
 include_once '../functions/functions.php';
+if(!isset($_SESSION['user'])){
+    header("Location: ../login.php");
+    exit;
+}
+
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
 
+if (isset($_POST['filter'])) {
+  $class_id = $_POST['class_id'];
+  $modules_id = $_POST['modules_id'];
+  $getStudentsGradesPerClass = new Teacher();
+  $students = $getStudentsGradesPerClass->getStudentsGradesPerClass($class_id, $modules_id);
+
+  $getModuleName = new Teacher();
+  $module = $getModuleName->getModuleName($modules_id);
+
+  $getClassName = new Teacher();
+  $class = $getClassName->getClassName($class_id);
+
+}
 
 ?>
 <!DOCTYPE html>
@@ -16,7 +34,7 @@ $user_details = $getUserProfile-> getUserProfile();
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Dashboard</title>
+  <title>View Grades | MRC</title>
 
   <!-- Custom fonts for this template-->
   <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -50,7 +68,7 @@ $user_details = $getUserProfile-> getUserProfile();
         <div class="container-fluid">
 
           <!-- Page Heading -->
-          <h1 class="h3 mb-4 text-gray-800">View Grades</h1>
+          <h1 class="h3 mb-4 text-gray-800">Viewing <?php echo $class['name']; ?>'s <?php echo $module['name']; ?> Grades  </h1>
           
 
         </div>
@@ -63,47 +81,49 @@ $user_details = $getUserProfile-> getUserProfile();
   <!-- Basic Card Example -->
     <div class="card shadow mb-4">
       <div class="card-body">
-              <div class="table-responsive">
+        <div class="table-responsive">
+        <?php
+        if(isset($students) && count($students)>0){
+        $i = 0; 
+          ?>
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
                     <tr>
-                      <th>Student Name</th>
-                      <th>Position</th>
+                      <th>Student ID</th>
+                      <th>Name</th>
+                      <th>Module</th>
                       <th>Class</th>
-                      <th>Age</th>
-                      <th>Grade Date</th>
-                      <th>Subject</th>
+                      <th>Grade</th>
+                      <th>Date Recorded</th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <th>Student Name</th>
-                      <th>Position</th>
-                      <th>Class</th>
-                      <th>Age</th>
-                      <th>Grade Date</th>
-                      <th>Subject</th>
-                    </tr>
-                  </tfoot>
                   <tbody>
+          <?php
+          foreach($students as $student){ 
+          $i ++;
+          ?>
                     <tr>
-                      <td>Tiger Nixon</td>
-                      <td>System Architect</td>
-                      <td>Nyika</td>
-                      <td>61</td>
-                      <td>2011/04/25</td>
-                      <td>Mathematics</td>
+                      <td><?php echo $student['student_no']; ?></td>
+                      <td><?php echo $student['name']; ?></td>
+                      <td><?php echo $module['name']; ?></td>
+                      <td><?php echo $student['class_name']; ?></td>
+                      <td><?php echo $student['grade']; ?></td>
+                      <td><?php $date = date_create($student['date_recorded']); echo date_format($date,"d, M Y"); ?></td>
                     </tr>
-                    <tr>
-                      <td>Garrett Winters</td>
-                      <td>Accountant</td>
-                      <td>Vipya</td>
-                      <td>63</td>
-                      <td>2011/07/25</td>
-                      <td>Biology</td>
-                    </tr>
+
+          <?php
+            
+          } ?>
+
                   </tbody>
                 </table>
+                <?php
+                      }else {
+                        echo "No Grades Available for this Class and Module"; 
+                          ?> <a href="filter-view-grades.php"> <button class="btn btn-outline-primary">Back <i style="font-size: 18px;" class="fas fa-undo"></i></button></a> <?php
+                      }
+        ?>
+
               </div>
       </div>
     </div>

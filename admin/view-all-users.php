@@ -132,10 +132,10 @@ $disableUser = $disableUser->disableUser($id);
                       <td><?php echo $user['middlename']; ?></td>
                       <td><?php echo $user['lastname']; ?></td>
                       <td><?php $date = date_create($user['date_added']); echo date_format($date,"d, M Y"); ?></td>
-                      <td><?php echo $user['roles_id']; ?> Year(s)</td>
+                      <td><?php echo $user['role_name']; ?></td>
                       <td><?php if($user['status'] == 1){  ?><div class="custom-control custom-switch">
   <input type="checkbox" checked="" class="custom-control-input" id="customSwitch1">
-  <label class="custom-control-label" for="customSwitch1"><a href="view-all-users.php?disable_id=<?php echo $user['username']; ?>">Disable</a></label></div><?php  }else{  ?><div class="custom-control custom-switch">
+  <label class="custom-control-label" for="customSwitch1"><a href="view-all-users.php?disable_id=<?php echo $user['username']; ?>">Disable</a><?php  }else{  ?><div class="custom-control custom-switch">
   <input type="checkbox" class="custom-control-input" id="customSwitch1">
   <label class="custom-control-label" for="customSwitch1"><a href="view-all-users.php?enable_id=<?php echo $user['username']; ?>">Enable</a></label></div><?php } ?></td>
                     </tr>

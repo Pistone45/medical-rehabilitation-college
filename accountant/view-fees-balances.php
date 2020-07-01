@@ -5,6 +5,13 @@ if(!isset($_SESSION['user'])){
     exit;
 }
 
+if (isset($_GET['id'])) {
+  $student_no = $_GET['id'];
+
+  $resolveFeesBalance = new Accountant();
+  $resolveFeesBalance = $resolveFeesBalance->resolveFeesBalance($student_no);
+
+}
 
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
@@ -71,14 +78,14 @@ $balances = $getStudentsBalances->getStudentsBalances();
   <!-- Basic Card Example -->
     <div class="card shadow mb-4">
       <div class="card-body">
-                    <?php
-            if(isset($_SESSION["balance-recorded"]) && $_SESSION["balance-recorded"]==true)
+            <?php
+            if(isset($_SESSION["fees_resolved"]) && $_SESSION["fees_resolved"]==true)
                   { ?>
             <div class="alert alert-success" role="alert">
               <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <strong>Success! </strong> You have Successfully recorded fees Balance for a Student
+              <strong>Success! </strong> You have Successfully Resolved fees Balance for a Student
             </div>  <?php
-            unset($_SESSION["balance-recorded"]);
+            unset($_SESSION["fees_resolved"]);
                       }
               ?>
               <div class="table-responsive">
@@ -94,6 +101,7 @@ $balances = $getStudentsBalances->getStudentsBalances();
                       <th>Class</th>
                       <th>Balance</th>
                       <th>Date Recorded</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -105,8 +113,9 @@ $balances = $getStudentsBalances->getStudentsBalances();
                       <td><?php echo $balance['students_student_no']; ?></td>
                       <td><?php echo $balance['name']; ?></td>
                       <td>class</td>
-                      <td><?php echo $balance['balance']; ?></td>
+                      <td>K<?php echo number_format($balance['balance']); ?></td>
                       <td><?php $date = date_create($balance['date_recorded']); echo date_format($date,"d, M Y"); ?></td>
+                      <td><a href="view-fees-balances.php?id=<?php echo $balance['students_student_no']; ?>"><i class="fas fa-check-circle fa-1x"></i> Resolve Fees</a></td>
 
                     </tr>
 
@@ -118,7 +127,7 @@ $balances = $getStudentsBalances->getStudentsBalances();
                 </table>
                 <?php
                       }else {
-                        echo "No Students with Balances Available";
+                        echo "No Students with Fees Balances Available";
                       }
         ?>
               </div>
@@ -131,6 +140,12 @@ $balances = $getStudentsBalances->getStudentsBalances();
 
       </div>
       <!-- End of Main Content -->
+<script>
+if ( window.history.replaceState ) {
+  window.history.replaceState( null, null, window.location.href );
+}
+</script>
+    
   <script type="text/javascript">
     window.setTimeout(function() {
     $(".alert").fadeTo(500, 0).slideUp(500, function(){
