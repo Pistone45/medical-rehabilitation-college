@@ -18,6 +18,15 @@ $deleteStudent = $deleteStudent->deleteStudent($id);
 
 }
 
+if (isset($_POST['send_message'])) {
+  $subject = $_POST['subject'];
+  $message = $_POST['message'];
+  $student_no = $_POST['student_no'];
+
+  $sendMessage = new Staff();
+  $sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,6 +47,7 @@ $deleteStudent = $deleteStudent->deleteStudent($id);
 
   <!-- Custom styles for this template-->
   <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
 </head>
 
@@ -76,7 +86,7 @@ $deleteStudent = $deleteStudent->deleteStudent($id);
   <!-- Basic Card Example -->
     <div class="card shadow mb-4">
       <div class="card-body">
-                    <?php
+          <?php
             if(isset($_SESSION["student-deleted"]) && $_SESSION["student-deleted"]==true)
                   { ?>
             <div class="alert alert-success" role="alert">
@@ -85,6 +95,18 @@ $deleteStudent = $deleteStudent->deleteStudent($id);
             </div>  <?php
             unset($_SESSION["student-deleted"]);
             header('Refresh: 4; URL= view-students.php');
+                      }
+              ?>
+
+            <?php
+            if(isset($_SESSION["message_sent"]) && $_SESSION["message_sent"]==true)
+                  { ?>
+            <div class="alert alert-success" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Success! </strong> Message sent Successfully to Student
+            </div>  <?php
+            unset($_SESSION["message_sent"]);
+            header('Refresh: 4; URL= messages.php');
                       }
               ?>
               <div class="table-responsive">
@@ -101,11 +123,14 @@ $deleteStudent = $deleteStudent->deleteStudent($id);
                       <th>Email</th>
                       <th>Date Added</th>
                       <th>Action</th>
+                      <th>Message</th>
                     </tr>
                   </thead>
                   <tbody>
           <?php
-          foreach($students as $student){ 
+          $i = 0;
+          foreach($students as $student){
+          $i++; 
           ?>
                     <tr>
                       <td><?php echo $student['name']; ?></td>
@@ -115,6 +140,42 @@ $deleteStudent = $deleteStudent->deleteStudent($id);
                       <td><?php echo $student['email']; ?></td>
                       <td><?php $date = date_create($student['date_added']); echo date_format($date,"d, M Y"); ?></td>
                       <td><i class="fas fa-trash text-gray-800"></i> <a href="#">Delete</a></td>
+                      <td><!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#contact<?php echo $i; ?>modal">
+<i style="font-size: 25px;" class="far fa-envelope-open"></i>
+</button></td>
+
+<!-- Modal -->
+<div class="modal fade" id="contact<?php echo $i; ?>modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Message <?php echo $student['name']; ?></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <form action="view-students.php" method="POST">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Subject</label>
+            <input type="text" name="subject" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Subject/Heading" required="">
+          </div>
+
+        <div class="form-group">
+          <label for="exampleFormControlTextarea1">Message</label>
+          <textarea placeholder="Enter Message" required="" name="message" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+        </div>
+        <input type="text" hidden="" name="student_no" value="<?php echo $student['student_no']; ?>">
+        <button type="submit" name="send_message" class="btn btn-primary"><i class="fas fa-envelope"></i> Send Message</button>
+      </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
                     </tr>
           <?php
             

@@ -30,9 +30,9 @@ class Settings{
 	}
 
 	public function getCurrentSettings(){
-		$getCurrentSettings = $this->dbCon->PREPARE("SELECT year, semester_id
+		$getCurrentSettings = $this->dbCon->PREPARE("SELECT settings.id as id, year, semester_id, semester.name as semester_name
 		 FROM settings INNER JOIN semester ON(settings.semester_id=semester.id)");
-		$getCurrentSettings->bindParam(1,$status);
+		//$getCurrentSettings->bindParam(1,$status);
 		$getCurrentSettings->execute();
 		
 		if($getCurrentSettings->rowCount()>0){
@@ -40,8 +40,42 @@ class Settings{
 			
 			return $row;
 		}
-	}
+	}//End of getting Current Settings
+
+
+
+	public function getSemesters(){
+		$getSemesters = $this->dbCon->PREPARE("SELECT id, name
+		 FROM semester");
+		//$getSemesters->bindParam(1,$status);
+		$getSemesters->execute();
+		
+		if($getSemesters->rowCount()>0){
+			$rows = $getSemesters->fetchAll();
+			
+			return $rows;
+		}
+	}//End of getting Semesters
 	
+
+	public function updateCurrentSettings($old_id, $old_year, $old_semester_id, $year, $semester_id){
+		$UpdateOldSettings = $this->dbCon->prepare("INSERT INTO settings_old (year, semester_id) 
+				VALUES (:year, :semester_id)" );
+				$UpdateOldSettings->execute(array(
+					  ':year'=>($old_year),
+					  ':semester_id'=>($old_semester_id)
+					  ));
+
+		$updateCurrentSettings = $this->dbCon->prepare("UPDATE settings SET year=? , semester_id=? WHERE id=?" );
+		$updateCurrentSettings->bindParam(1,$year);
+		$updateCurrentSettings->bindParam(2,$semester_id);
+		$updateCurrentSettings->bindParam(3,$old_id);
+		$updateCurrentSettings->execute();
+
+		$_SESSION['settings_updated']=true;
+
+
+	}//End of Updating Current Settings
 
 
 
@@ -498,6 +532,204 @@ class Students{
 	}//End of deleting Student
 
 
+	public function getStudentClass(){	
+				$getStudentClass = $this->dbCon->prepare("SELECT classes_id FROM students WHERE student_no=?" );
+				$getStudentClass->bindParam(1, $_SESSION['user']['username']);
+				$getStudentClass->execute();
+
+				if($getStudentClass->rowCount()>0){
+				$row = $getStudentClass -> fetch();
+
+				return $row;
+
+			}	
+	}//End og getting Student Class
+
+
+
+	public function getAllModulesPerStudent($classes_id){	
+				$getAllModulesPerStudent = $this->dbCon->prepare("SELECT modules_id, modules.name as module_name FROM classes_has_modules INNER JOIN modules ON(classes_has_modules.modules_id=modules.id) WHERE classes_id=?" );
+				$getAllModulesPerStudent->bindParam(1, $classes_id);
+				$getAllModulesPerStudent->execute();
+
+				if($getAllModulesPerStudent->rowCount()>0){
+				$rows = $getAllModulesPerStudent -> fetchAll();
+
+				return $rows;
+
+			}	
+	}//End og getting all Modules per Student
+
+
+	public function getAllStudentsGrades($year, $semester_id, $classes_id){
+		$status = 1;
+		$checkFeesBalance = $this->dbCon->PREPARE("SELECT students_student_no FROM fees_balances WHERE students_student_no=? AND status =? " );
+
+		$checkFeesBalance->bindParam(1, $_SESSION['user']['username']);
+		$checkFeesBalance->bindParam(2, $status);
+		$checkFeesBalance->execute();
+
+		if($checkFeesBalance->rowCount() >= 1){
+			$_SESSION['balance_found'] = true;
+		} else{
+
+		$getAllStudentsGrades = $this->dbCon->Prepare("SELECT students.student_no as student_no, grade, date_recorded, classes.name as class_name, modules.name as module_name
+		FROM grades INNER JOIN students ON(grades.students_student_no=students.student_no) INNER JOIN classes ON(students.classes_id=classes.id) INNER JOIN modules ON(grades.modules_id=modules.id) WHERE grades.classes_id=? AND grades.year=? AND grades.semester_id =? AND grades.students_student_no =? ORDER BY date_added DESC");
+		$getAllStudentsGrades->bindParam(1, $classes_id);
+		$getAllStudentsGrades->bindParam(2, $year);
+		$getAllStudentsGrades->bindParam(3, $semester_id);
+		$getAllStudentsGrades->bindParam(4, $_SESSION['user']['username']);
+
+		$getAllStudentsGrades->execute();
+		
+		if($getAllStudentsGrades->rowCount()>0){
+			$rows = $getAllStudentsGrades->fetchAll();
+			return $rows;
+		}
+		}
+
+	} //end of getting All Students Grades
+
+
+
+	public function getFeesBalancePerStudent(){
+		$status = 1;
+		$getFeesBalancePerStudent = $this->dbCon->Prepare("SELECT COUNT(students_student_no) as student_no, balance, remarks, date_recorded, status FROM fees_balances WHERE status =? AND students_student_no =? ");
+		$getFeesBalancePerStudent->bindParam(1,$status);
+		$getFeesBalancePerStudent->bindParam(2,$_SESSION['user']['username']);
+		$getFeesBalancePerStudent->execute();
+		
+		if($getFeesBalancePerStudent->rowCount()>0){
+			$row = $getFeesBalancePerStudent->fetch();
+			return $row;
+		}
+	} //end of getting Students with Fees Balances
+
+
+
+		public function getAllFeesBalancesPerStudent(){
+		$getAllFeesBalancesPerStudent = $this->dbCon->Prepare("SELECT students_student_no, fees_balances.status as status, balance, remarks, date_recorded, CONCAT(students.firstname,' ',students.lastname) as name
+		FROM fees_balances INNER JOIN students ON(fees_balances.students_student_no=students.student_no) WHERE fees_balances.students_student_no =? ORDER BY date_recorded DESC");
+		$getAllFeesBalancesPerStudent->bindParam(1,$_SESSION['user']['username']);
+		$getAllFeesBalancesPerStudent->execute();
+		
+		if($getAllFeesBalancesPerStudent->rowCount()>0){
+			$rows = $getAllFeesBalancesPerStudent->fetchAll();
+			return $rows;
+		}
+	} //end of getting Students with Fees Balances
+
+
+	public function getUnreadNotificationPerStudent(){
+		$status = 0;
+		$getUnreadNotificationPerStudent = $this->dbCon->Prepare("SELECT id, notification, date_sent, username, status
+		FROM notifications WHERE students_student_no =? AND status =? ORDER BY date_sent DESC");
+		$getUnreadNotificationPerStudent->bindParam(1, $_SESSION['user']['username']);
+		$getUnreadNotificationPerStudent->bindParam(2, $status);
+		$getUnreadNotificationPerStudent->execute();
+		
+		if($getUnreadNotificationPerStudent->rowCount()>0){
+			$rows = $getUnreadNotificationPerStudent->fetchAll();
+			return $rows;
+		}
+	} //End of getting Notifications
+
+
+	public function getNotificationPerStudent(){
+		$getNotificationPerStudent = $this->dbCon->Prepare("SELECT id, notification, date_sent, username, status
+		FROM notifications WHERE students_student_no =? ORDER BY date_sent DESC");
+		$getNotificationPerStudent->bindParam(1, $_SESSION['user']['username']);
+		$getNotificationPerStudent->execute();
+		
+		if($getNotificationPerStudent->rowCount()>0){
+			$rows = $getNotificationPerStudent->fetchAll();
+			return $rows;
+		}
+	} //End of getting Notifications Per Student
+
+
+
+	public function getMessagesPerStudent(){
+		$getMessagesPerStudent = $this->dbCon->Prepare("SELECT id, subject, message, date_sent, username, status
+		FROM messages WHERE students_student_no =? ORDER BY date_sent DESC");
+		$getMessagesPerStudent->bindParam(1, $_SESSION['user']['username']);
+		$getMessagesPerStudent->execute();
+		
+		if($getMessagesPerStudent->rowCount()>0){
+			$rows = $getMessagesPerStudent->fetchAll();
+			return $rows;
+		}
+	} //End of getting Messages per Student
+
+
+	public function getUnreadMessagesPerStudent(){
+		$status = 0;
+		$getUnreadMessagesPerStudent = $this->dbCon->Prepare("SELECT id, subject, message, date_sent, username, status
+		FROM messages WHERE students_student_no =? AND status =? ORDER BY date_sent DESC");
+		$getUnreadMessagesPerStudent->bindParam(1, $_SESSION['user']['username']);
+		$getUnreadMessagesPerStudent->bindParam(2, $status);
+		$getUnreadMessagesPerStudent->execute();
+		
+		if($getUnreadMessagesPerStudent->rowCount()>0){
+			$rows = $getUnreadMessagesPerStudent->fetchAll();
+			return $rows;
+		}
+	} //End of getting Unread Messages per Student
+
+
+	public function countAllUnreadMessages(){
+		$status = 0;
+		$countAllUnreadMessages = $this->dbCon->Prepare("SELECT COUNT(message) as message FROM messages WHERE status =? AND students_student_no =? ");
+		$countAllUnreadMessages->bindParam(1,$status);
+		$countAllUnreadMessages->bindParam(2,$_SESSION['user']['username']);
+		$countAllUnreadMessages->execute();
+		
+		if($countAllUnreadMessages->rowCount()>0){
+			$row = $countAllUnreadMessages->fetch();
+			return $row;
+		}
+	} //End of counting all unread Messages per student
+
+
+	public function markMessageRead($id){
+		$status =1;// Read Status
+		$markMessageRead = $this->dbCon->PREPARE("UPDATE messages SET status =? WHERE id=? AND students_student_no =? ");
+		$markMessageRead->bindParam(1,$status);
+		$markMessageRead->bindParam(2,$id);
+		$markMessageRead->bindParam(3,$_SESSION['user']['username']);
+		$markMessageRead->execute();
+
+		$_SESSION['message_read'] = true;
+	} //End of marking a message as read
+
+
+	public function countAllUnreadNotifications(){
+		$status = 0;
+		$countAllUnreadNotifications = $this->dbCon->Prepare("SELECT COUNT(notification) as noti FROM notifications WHERE status =? AND students_student_no =? ");
+		$countAllUnreadNotifications->bindParam(1,$status);
+		$countAllUnreadNotifications->bindParam(2,$_SESSION['user']['username']);
+		$countAllUnreadNotifications->execute();
+		
+		if($countAllUnreadNotifications->rowCount()>0){
+			$row = $countAllUnreadNotifications->fetch();
+			return $row;
+		}
+	} //End of counting all unread notifications per student
+
+
+
+	public function markNotificationRead($id){
+		$status =1;// Read Status
+		$markNotificationRead = $this->dbCon->PREPARE("UPDATE notifications SET status =? WHERE id=? AND students_student_no =? ");
+		$markNotificationRead->bindParam(1,$status);
+		$markNotificationRead->bindParam(2,$id);
+		$markNotificationRead->bindParam(3,$_SESSION['user']['username']);
+		$markNotificationRead->execute();
+
+		$_SESSION['notification_read'] = true;
+	} //End of marking a message as read
+
+
 
 
 } //End of class Students
@@ -685,6 +917,199 @@ class Staff{
 
 
 
+  public function addAnnouncement($title, $description){
+  	$date = DATE("Y-m-d h:i");
+				$addAnnouncement = $this->dbCon->prepare("INSERT INTO announcements (title, description, date_added, username) 
+				VALUES (:title, :description, :date_added, :username)" );
+				$addAnnouncement->execute(array(
+						  ':title'=>($title),
+						  ':description'=>($description),
+						  ':date_added'=>($date),
+						  ':username'=>($_SESSION['user']['username'])
+						  ));
+
+
+
+		  $_SESSION['announcement_added']=true;
+		
+
+	} //end of Adding Announcements
+
+
+  public function addTeamMember($name, $position, $description, $picture){
+  	$date = DATE("Y-m-d h:i");
+				$addTeamMember = $this->dbCon->prepare("INSERT INTO team (name, position, description, picture, date_added) 
+				VALUES (:name, :position, :description, :picture, :date_added)" );
+				$addTeamMember->execute(array(
+						  ':name'=>($name),
+						  ':position'=>($position),
+						  ':description'=>($description),
+						  ':picture'=>($picture),
+						  ':date_added'=>($date)
+						  ));
+
+
+
+		  $_SESSION['member_added']=true;
+		
+
+	} //end of Adding Employee/Team member
+
+
+
+	public function getTeamMember(){
+		$getTeamMember = $this->dbCon->Prepare("SELECT id, name, position, description, date_added, picture
+		FROM team ORDER BY date_added DESC");
+		$getTeamMember->execute();
+		
+		if($getTeamMember->rowCount()>0){
+			$rows = $getTeamMember->fetchAll();
+			return $rows;
+		}
+	} //End of getting Team Members
+
+
+	  public function editTeamMember($id, $name, $position, $description){	
+				$editTeamMember = $this->dbCon->prepare("UPDATE team SET name=? , position=?, description=? WHERE id=?" );
+				$editTeamMember->bindParam(1,$name);
+				$editTeamMember->bindParam(2,$position);
+				$editTeamMember->bindParam(3,$description);
+				$editTeamMember->bindParam(4,$id);
+				$editTeamMember->execute();
+
+		  $_SESSION['member_edited']=true;
+
+	}// End of Editing a Team Member
+
+
+	public function deleteMember($id, $picture){
+			unlink($picture);	
+				$deleteMember = $this->dbCon->prepare("DELETE FROM team WHERE id=?" );
+				$deleteMember->bindParam(1,$id);
+				$deleteMember->execute();
+
+		  $_SESSION['member_deleted']=true;
+
+	}// End of Deleting a Member
+
+
+	  public function editAnnouncement($id, $title, $description){	
+				$editAnnouncement = $this->dbCon->prepare("UPDATE announcements SET title=? ,description=? WHERE id=?" );
+				$editAnnouncement->bindParam(1,$title);
+				$editAnnouncement->bindParam(2,$description);
+				$editAnnouncement->bindParam(3,$id);
+				$editAnnouncement->execute();
+
+		  $_SESSION['announcement_edited']=true;
+
+	}// End of Editing an Announcement
+
+
+	public function deleteAnnouncement($id){	
+				$deleteAnnouncement = $this->dbCon->prepare("DELETE FROM announcements WHERE id=?" );
+				$deleteAnnouncement->bindParam(1,$id);
+				$deleteAnnouncement->execute();
+
+		  $_SESSION['announcement_deleted']=true;
+
+	}// End of Deleting an Announcement
+
+
+
+	public function getAnnouncements(){
+		$getAnnouncements = $this->dbCon->Prepare("SELECT id, title, description, date_added, username 
+		FROM announcements ORDER BY date_added DESC");
+		$getAnnouncements->execute();
+		
+		if($getAnnouncements->rowCount()>0){
+			$rows = $getAnnouncements->fetchAll();
+			return $rows;
+		}
+	} //End of getting Announcements
+
+
+
+	public function sendNotification($notification, $student_no){
+  	$date = DATE("Y-m-d h:i");
+
+	    if(count($student_no)>0){
+ 			foreach($student_no as $students_student_no){
+
+		 	$sendNotification = $this->dbCon->prepare("INSERT INTO notifications (notification, students_student_no, date_sent, username) 
+			VALUES (:notification, :students_student_no, :date_sent, :username)" );
+			$sendNotification->execute(array(
+					  ':notification'=>($notification),
+					  ':students_student_no'=>($students_student_no),
+					  ':date_sent'=>($date),
+					  ':username'=>($_SESSION['user']['username'])
+					  ));
+
+		  	$_SESSION['notification_sent']=true;
+		            
+		     	   }
+		      }else {
+		        $_SESSION['failed'] = true;
+		      }
+		
+
+	} //End of Sending Notifications
+
+
+	public function getAllNotifications(){
+		$getAllNotifications = $this->dbCon->Prepare("SELECT DISTINCT(notification) id, notification, date_sent, username 
+		FROM notifications ORDER BY date_sent DESC");
+		$getAllNotifications->execute();
+		
+		if($getAllNotifications->rowCount()>0){
+			$rows = $getAllNotifications->fetchAll();
+			return $rows;
+		}
+	} //End of getting Notifications
+
+
+	public function deleteNotification($notification){	
+				$deleteNotification = $this->dbCon->prepare("DELETE FROM notifications WHERE notification=?" );
+				$deleteNotification->bindParam(1,$notification);
+				$deleteNotification->execute();
+
+		  $_SESSION['notification_deleted']=true;
+
+	}// End of Deleting a Notification
+
+
+	public function sendMessage($subject, $message, $student_no){
+  	$date = DATE("Y-m-d h:i");
+
+		 	$sendMessage = $this->dbCon->prepare("INSERT INTO messages (subject, message, students_student_no, date_sent, username) 
+			VALUES (:subject, :message, :students_student_no, :date_sent, :username)" );
+			$sendMessage->execute(array(
+					  ':subject'=>($subject),
+					  ':message'=>($message),
+					  ':students_student_no'=>($student_no),
+					  ':date_sent'=>($date),
+					  ':username'=>($_SESSION['user']['username'])
+					  ));
+
+		  	$_SESSION['message_sent']=true;
+		            
+
+	} //End of Sending a Message
+
+
+	public function getAllMessages(){
+		$getAllMessages = $this->dbCon->Prepare("SELECT students_student_no as student_no, id, subject, message, date_sent, username, status
+		FROM messages ORDER BY date_sent DESC");
+		//$getAllMessages->bindParam(1, $_SESSION['user']['username']);
+		$getAllMessages->execute();
+		
+		if($getAllMessages->rowCount()>0){
+			$rows = $getAllMessages->fetchAll();
+			return $rows;
+		}
+	} //End of getting All Messages
+
+
+
 } //End of class Staff
 
 
@@ -743,7 +1168,9 @@ class Accountant{
 
 
 	public function countAllStudentFeesBalances(){
-		$countAllStudentFeesBalances = $this->dbCon->Prepare("SELECT COUNT(students_student_no) as student_no FROM fees_balances");
+		$status = 1;
+		$countAllStudentFeesBalances = $this->dbCon->Prepare("SELECT COUNT(students_student_no) as student_no FROM fees_balances WHERE status =? ");
+		$countAllStudentFeesBalances->bindParam(1,$status);
 		$countAllStudentFeesBalances->execute();
 		
 		if($countAllStudentFeesBalances->rowCount()>0){

@@ -42,6 +42,7 @@ $RecordFeesBalance = $RecordFeesBalance->RecordFeesBalance($balance, $student_no
 
   <!-- Custom styles for this template-->
   <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
 </head>
 
@@ -88,6 +89,7 @@ $RecordFeesBalance = $RecordFeesBalance->RecordFeesBalance($balance, $student_no
               <strong>Success! </strong> You have Successfully recorded fees Balance for a Student
             </div>  <?php
             unset($_SESSION["balance-recorded"]);
+            header('Refresh: 5; URL= view-fees-balances.php');
                       }
               ?>
               <div class="table-responsive">

@@ -55,6 +55,7 @@ $recordGrade = $recordGrade->recordGrade($grade, $student_no, $class_id, $year, 
 
   <!-- Custom styles for this template-->
   <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
 </head>
 

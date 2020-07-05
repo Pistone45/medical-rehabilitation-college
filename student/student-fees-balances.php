@@ -4,20 +4,15 @@ if(!isset($_SESSION['user'])){
     header("Location: ../login.php");
     exit;
 }
-
-if (isset($_GET['id'])) {
-  $student_no = $_GET['id'];
-
-  $resolveFeesBalance = new Accountant();
-  $resolveFeesBalance = $resolveFeesBalance->resolveFeesBalance($student_no);
-
-}
-
+  
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
 
 $getStudentsBalances = new Accountant();
 $balances = $getStudentsBalances->getStudentsBalances();
+
+$getAllFeesBalancesPerStudent = new Students();
+$balances = $getAllFeesBalancesPerStudent->getAllFeesBalancesPerStudent();
 
 
 ?>
@@ -32,7 +27,7 @@ $balances = $getStudentsBalances->getStudentsBalances();
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Fees Balances | MRC</title>
+  <title>Your Balances | MRC</title>
 
   <!-- Custom fonts for this template-->
   <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -61,13 +56,13 @@ $balances = $getStudentsBalances->getStudentsBalances();
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb float-right">
     <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Fees Balances</li>
+    <li class="breadcrumb-item active" aria-current="page">Your Balances</li>
   </ol>
 </nav>
         <div class="container-fluid">
 
           <!-- Page Heading -->
-          <h1 class="h3 mb-4 text-gray-800">All Fees Balances</h1>
+          <h1 class="h3 mb-4 text-gray-800">All Your Fees Balances</h1>
           
 
         </div>
@@ -79,17 +74,6 @@ $balances = $getStudentsBalances->getStudentsBalances();
   <!-- Basic Card Example -->
     <div class="card shadow mb-4">
       <div class="card-body">
-            <?php
-            if(isset($_SESSION["fees_resolved"]) && $_SESSION["fees_resolved"]==true)
-                  { ?>
-            <div class="alert alert-success" role="alert">
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <strong>Success! </strong> You have Successfully Resolved fees Balance for a Student
-            </div>  <?php
-            unset($_SESSION["fees_resolved"]);
-            header('Refresh: 4; URL= view-fees-balances.php');
-                      }
-              ?>
               <div class="table-responsive">
         <?php
         if(isset($balances) && count($balances)>0){
@@ -100,10 +84,9 @@ $balances = $getStudentsBalances->getStudentsBalances();
                     <tr>
                       <th>Student ID</th>
                       <th>Name</th>
-                      <th>Class</th>
                       <th>Balance</th>
+                      <th>Status</th>
                       <th>Date Recorded</th>
-                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -114,10 +97,9 @@ $balances = $getStudentsBalances->getStudentsBalances();
                     <tr>
                       <td><?php echo $balance['students_student_no']; ?></td>
                       <td><?php echo $balance['name']; ?></td>
-                      <td>class</td>
-                      <td>K<?php echo number_format($balance['balance']); ?></td>
+                      <td><?php echo $balance['balance']; ?></td>
+                      <td><?php if($balance['status'] == 0){  ?><p style="color: green;">Balance Resolved</p>  <?php  }elseif($balance['status'] == 1){   ?><p style="color: red;">Outstanding Balance</p><?php  } ?></td>
                       <td><?php $date = date_create($balance['date_recorded']); echo date_format($date,"d, M Y"); ?></td>
-                      <td><a href="view-fees-balances.php?id=<?php echo $balance['students_student_no']; ?>"><i class="fas fa-check-circle fa-1x"></i> Resolve Fees</a></td>
 
                     </tr>
 
@@ -129,7 +111,19 @@ $balances = $getStudentsBalances->getStudentsBalances();
                 </table>
                 <?php
                       }else {
-                        echo "No Students with Fees Balances Available";
+                          ?>
+                          <div class="row container-fluid">
+                            <div class="col-md-6">
+                          <div align="center">
+                          <p>You don't have any recorded Fees Balances</p>
+                          <i style="font-size: 100px;" class="far fa-smile"></i>
+                          </div>
+                            </div>
+                            <div class="col-md-6">
+                              <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="../images/undraw_celebration_0jvk.svg" alt="">
+                            </div>
+                          </div>
+                          <?php
                       }
         ?>
               </div>
@@ -142,12 +136,6 @@ $balances = $getStudentsBalances->getStudentsBalances();
 
       </div>
       <!-- End of Main Content -->
-<script>
-if ( window.history.replaceState ) {
-  window.history.replaceState( null, null, window.location.href );
-}
-</script>
-    
   <script type="text/javascript">
     window.setTimeout(function() {
     $(".alert").fadeTo(500, 0).slideUp(500, function(){

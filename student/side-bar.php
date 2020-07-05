@@ -29,7 +29,7 @@
 
       <!-- Nav Item - Pages Collapse Menu -->
 
-      <!-- Nav Item - Utilities Collapse Menu -->
+      <!-- Nav Item - Grades Collapse Menu -->
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsegrades" aria-expanded="true" aria-controls="collapsegrades">
           <i class="fas fa-graduation-cap"></i>
@@ -38,12 +38,12 @@
         <div id="collapsegrades" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Manage Grades:</h6>
-            <a class="collapse-item" href="view-grades.php">View Grades</a>
+            <a class="collapse-item" href="filter-grades.php"><i class="fas fa-eye"></i> View Grades</a>
           </div>
         </div>
       </li>
 
-      <!-- Nav Item - Utilities Collapse Menu -->
+      <!-- Nav Item - Materials Collapse Menu -->
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsematerials" aria-expanded="true" aria-controls="collapsematerials">
           <i class="fas fa-book"></i>
@@ -51,8 +51,8 @@
         </a>
         <div id="collapsematerials" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Manage Learning Materials:</h6>
-            <a class="collapse-item" href="view-materials.php">View Materials</a>
+            <h6 class="collapse-header">Manage Materials:</h6>
+            <a class="collapse-item" href="filter-materials.php"><i class="fas fa-eye"></i> View Materials</a>
           </div>
         </div>
       </li>
@@ -60,6 +60,22 @@
       
       <!-- Divider -->
       <hr class="sidebar-divider d-none d-md-block">
+
+
+      <!-- Nav Item - Utilities Collapse Menu -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsemessages" aria-expanded="true" aria-controls="collapsemessages">
+          <i class="fas fa-graduation-cap"></i>
+          <span>Notifications/ Messages</span>
+        </a>
+        <div id="collapsemessages" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Manage Grades:</h6>
+            <a class="collapse-item" href="notifications.php"><i class="fas fa-bell"></i> View notifications</a>
+            <a class="collapse-item" href="messages.php"><i class="fas fa-envelope"></i> View Messages</a>
+          </div>
+        </div>
+      </li>
 
       <!-- Sidebar Toggler (Sidebar) -->
       <div class="text-center d-none d-md-inline">

@@ -8,16 +8,14 @@ if(!isset($_SESSION['user'])){
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
 
-if (isset($_POST['filter'])) {
-  $year = $_POST['year'];
-  $semester_id = $_POST['semester_id'];
+$getAllMessages = new Staff();
+$messages = $getAllMessages->getAllMessages();
 
-  $getStudentClass = new Students();
-  $class = $getStudentClass-> getStudentClass();
-  $classes_id = $class['classes_id'];
 
-  $getAllStudentsGrades = new Students();
-  $grades = $getAllStudentsGrades->getAllStudentsGrades($year, $semester_id, $classes_id);
+if (isset($_POST['mark'])) {
+$id = $_POST['id'];
+$markNotificationRead = new Students();
+$markNotificationRead = $markNotificationRead->markNotificationRead($id);
 
 }
 
@@ -33,7 +31,7 @@ if (isset($_POST['filter'])) {
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Your Grades | MRC</title>
+  <title>Messages | MRC</title>
 
   <!-- Custom fonts for this template-->
   <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -62,59 +60,70 @@ if (isset($_POST['filter'])) {
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb float-right">
     <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Your Grades</li>
+    <li class="breadcrumb-item active" aria-current="page">Messages</li>
   </ol>
 </nav>
         <div class="container-fluid">
 
           <!-- Page Heading -->
-          <h1 class="h3 mb-4 text-gray-800">Viewing Your Grades <?php echo $_SESSION['user']['username']; ?></h1>
+          <h1 class="h3 mb-4 text-gray-800">All Sent Messages <a href="view-students.php"><button class="btn btn-outline-primary">Send Message</button></a></h1>
           
 
         </div>
         <!-- /.container-fluid -->
 
 <div class="row container-fluid">
-  <div class="col-md-8">
-
+  <div class="col-md-9">
   <!-- Basic Card Example -->
     <div class="card shadow mb-4">
       <div class="card-body">
         <?php
-        if(isset($_SESSION["balance_found"]) && $_SESSION["balance_found"]==true)
+        if(isset($_SESSION["notification_sent"]) && $_SESSION["notification_sent"]==true)
               { ?>
-        <div class="alert alert-danger" role="alert">
+        <div class="alert alert-success" role="alert">
           <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <strong>Fees Balance Found! </strong> Please settle your Fees Balance first
+          <strong>Success! </strong> Notification to all Students sent
         </div>  <?php
-        unset($_SESSION["balance_found"]);
-        //header('Refresh: 5; URL= filter-view-grades.php');
+        unset($_SESSION["notification_sent"]);
+        header('Refresh: 4; URL= view-notifications.php');
+                  }
+          ?>
+        <?php
+        if(isset($_SESSION["notification_read"]) && $_SESSION["notification_read"]==true)
+              { ?>
+        <div class="alert alert-success" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <strong>Success! </strong> Notification marked as read
+        </div>  <?php
+        unset($_SESSION["notification_read"]);
+        header('Refresh: 2; URL= notifications.php');
                   }
           ?>
         <div class="table-responsive">
         <?php
-        if(isset($grades) && count($grades)>0){
+        if(isset($messages) && count($messages)>0){
         $i = 0; 
           ?>
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
                     <tr>
-                      <th>Class Name</th>
-                      <th>Module</th>
-                      <th>Grade</th>
-                      <th>Date Recorded</th>
+                      <th>Subject</th>
+                      <th>Message</th>
+                      <th>Date Sent</th>
+                      <th>Student No</th>
                     </tr>
                   </thead>
                   <tbody>
           <?php
-          foreach($grades as $grade){ 
+          foreach($messages as $message){ 
           $i ++;
           ?>
                     <tr>
-                      <td><?php echo $grade['class_name']; ?></td>
-                      <td><?php echo $grade['module_name']; ?></td>
-                      <td><?php echo $grade['grade']; ?></td>
-                      <td><?php $date = date_create($grade['date_recorded']); echo date_format($date,"d, M Y"); ?></td>
+                      <td><?php echo $message['subject']; ?></td>
+                      <td><?php echo $message['message']; ?></td>
+                      <td><?php $date = date_create($message['date_sent']); echo date_format($date,"d, M Y"); ?></td>
+                      <td><?php echo $message['student_no']; ?></td>
+                      
                     </tr>
 
           <?php
@@ -126,10 +135,10 @@ if (isset($_POST['filter'])) {
                 <?php
                       }else {
                          
-                          ?> <a href="filter-grades.php"> <button class="btn btn-primary">Back <i style="font-size: 18px;" class="fas fa-undo"></i></button></a>
+                          ?>
                           <div align="center">
-                          <p>No Grades Available for Your Class and Module</p>
-                          <i style="font-size: 100px;" class="far fa-meh-blank"></i>
+                          <p>You havent sent any Messages</p>
+                          <i style="font-size: 100px;" class="fas fa-envelope"></i>
                           </div> 
                           <?php
                       }
@@ -141,11 +150,12 @@ if (isset($_POST['filter'])) {
     <!--End of Basic Card Example -->
 
   </div>
-  <div class="col-md-4">
-    <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="../images/undraw_detailed_analysis_xn7y.svg" alt="">
+  <div class="col-md-3">
+    <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="../images/undraw_message_sent_1030.svg" alt="">
   </div>
 </div>
 
-      </div>
-      <!-- End of Main Content -->
+</div>
+<!-- End of Main Content -->
+
 <?php include 'footer.php';  ?>

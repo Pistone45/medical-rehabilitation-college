@@ -1,8 +1,20 @@
 <?php
 include_once '../functions/functions.php';
+if(!isset($_SESSION['user'])){
+    header("Location: ../login.php");
+    exit;
+}
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
 
+$countAllUnreadNotifications = new Students();
+$count = $countAllUnreadNotifications-> countAllUnreadNotifications();
+
+$countAllUnreadMessages = new Students();
+$count_unread = $countAllUnreadMessages-> countAllUnreadMessages();
+
+$getFeesBalancePerStudent = new Students();
+$feesBalance = $getFeesBalancePerStudent-> getFeesBalancePerStudent();
 
 ?>
 <!DOCTYPE html>
@@ -16,7 +28,7 @@ $user_details = $getUserProfile-> getUserProfile();
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Dashboard</title>
+  <title>Student Dashboard | MRC</title>
 
   <!-- Custom fonts for this template-->
   <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -46,7 +58,67 @@ $user_details = $getUserProfile-> getUserProfile();
 
           <!-- Page Heading -->
           <h1 class="h3 mb-4 text-gray-800">Student Dashboard</h1>
-          
+                    <!-- Content Row -->
+          <div class="row">
+
+            <!-- Fees Balance -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <a href="student-fees-balances.php">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Fees Balance</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800"><?php if($feesBalance['student_no'] == 0){ echo "No Balance";}else{echo "K".number_format($feesBalance['balance']);} ?></div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+                </a>
+              </div>
+            </div>
+
+            <!-- Unread Notifications -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-warning shadow h-100 py-2">
+                <a href="notifications.php">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Unread Notifications</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $count['noti'];?></div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-bell fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+                </a>
+              </div>
+            </div>
+
+            <!-- Unread Messages -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-danger shadow h-100 py-2">
+                <a href="messages.php">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Unread Messages</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $count_unread['message'] ?></div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-envelope fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+                </a>
+              </div>
+            </div>
+
+          </div>
 
         </div>
         <!-- /.container-fluid -->

@@ -1,5 +1,10 @@
 <?php
 include_once '../functions/functions.php';
+if(!isset($_SESSION['user'])){
+    header("Location: ../login.php");
+    exit;
+}
+
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
 
@@ -36,6 +41,7 @@ if (isset($_POST['filter'])) {
 
   <!-- Custom styles for this template-->
   <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
 </head>
 
@@ -103,7 +109,7 @@ if (isset($_POST['filter'])) {
                       <td><?php if($material['semester_id']==1){echo "1st Semester";}elseif($material['semester_id']==2){echo "2nd Semester";} ?></td>
                       <td><?php echo $material['year']; ?></td>
                       <td><?php $date = date_create($material['date_added']); echo date_format($date,"d, M Y"); ?></td>
-                      <td><a href=""><button class="btn btn-outline-primary"><i style="font-size: 18px;" class="fas fa-download"> Download</button></a></td>
+                      <td><a href="<?php echo $material['material']; ?>"><button class="btn btn-outline-primary"><i style="font-size: 18px;" class="fas fa-download"> Download</button></a></td>
                     </tr>
 
           <?php

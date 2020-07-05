@@ -3,7 +3,19 @@ include_once '../functions/functions.php';
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
 
+if (isset($_POST['filter'])) {
+  $classes_id = $_POST['classes_id'];
+  $modules_id = $_POST['modules_id'];
 
+  $getMaterialsPerClassModule = new Teacher();
+  $materials = $getMaterialsPerClassModule->getMaterialsPerClassModule($classes_id, $modules_id);
+
+  $getModuleName = new Teacher();
+  $module = $getModuleName->getModuleName($modules_id);
+
+  $getClassName = new Teacher();
+  $class = $getClassName->getClassName($classes_id);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,7 +28,7 @@ $user_details = $getUserProfile-> getUserProfile();
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Dashboard</title>
+  <title>View Materials | MRC</title>
 
   <!-- Custom fonts for this template-->
   <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -24,6 +36,7 @@ $user_details = $getUserProfile-> getUserProfile();
 
   <!-- Custom styles for this template-->
   <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
 </head>
 
@@ -50,55 +63,69 @@ $user_details = $getUserProfile-> getUserProfile();
         <div class="container-fluid">
 
           <!-- Page Heading -->
-          <h1 class="h3 mb-4 text-gray-800">View Materials</h1>
+          <h1 class="h3 mb-4 text-gray-800"><?php echo $class['name']; ?>'s <?php echo $module['name']; ?> Materials</h1>
           
 
         </div>
         <!-- /.container-fluid -->
 
 <div class="row container-fluid">
-  <div class="col-md-1"></div>
-  <div class="col-md-10">
+  <div class="col-md-12 col-xs-12">
 
   <!-- Basic Card Example -->
     <div class="card shadow mb-4">
       <div class="card-body">
-              <div class="table-responsive">
+        <div class="table-responsive">
+        <?php
+        if(isset($materials) && count($materials)>0){
+        $i = 0; 
+          ?>
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
                     <tr>
-                      <th>Class Name</th>
-                      <th>Subject</th>
+                      <th>Title</th>
+                      <th>Class</th>
+                      <th>Module</th>
+                      <th>Semester</th>
+                      <th>Year</th>
+                      <th>Date Added</th>
                       <th>Action</th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-                      <th>Class Name</th>
-                      <th>Subject</th>
-                      <th>Action</th>
-                    </tr>
-                  </tfoot>
                   <tbody>
+          <?php
+          foreach($materials as $material){ 
+          $i ++;
+          ?>
                     <tr>
-                      <td>Vipya</td>
-                      <td>Mathematics</td>
-                      <td><a href=""><i class="fas fa-download"></i> Download</a></td>
+                      <td><?php echo $material['title']; ?></td>
+                      <td><?php echo $material['class_name']; ?></td>
+                      <td><?php echo $material['module_name']; ?></td>
+                      <td><?php if($material['semester_id']==1){echo "1st Semester";}elseif($material['semester_id']==2){echo "2nd Semester";} ?></td>
+                      <td><?php echo $material['year']; ?></td>
+                      <td><?php $date = date_create($material['date_added']); echo date_format($date,"d, M Y"); ?></td>
+                      <td><a href="<?php echo $material['material']; ?>"><button class="btn btn-outline-primary"><i style="font-size: 18px;" class="fas fa-download"> Download</button></a></td>
                     </tr>
-                    <tr>
-                      <td>Nyika</td>
-                      <td>Biology</td>
-                      <td><a href=""><i class="fas fa-download"></i> Download</a></td>
-                    </tr>
+
+          <?php
+            
+          } ?>
+
                   </tbody>
                 </table>
+                <?php
+                      }else {
+                        echo "No Materials Available for Your Class and Module"; 
+                          ?> <a href="filter-materials.php"> <button class="btn btn-outline-primary">Back <i style="font-size: 18px;" class="fas fa-undo"></i></button></a> <?php
+                      }
+        ?>
+
               </div>
       </div>
     </div>
     <!--End of Basic Card Example -->
 
   </div>
-  <div class="col-md-1"></div>
 </div>
 
       </div>
