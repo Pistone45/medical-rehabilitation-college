@@ -1,0 +1,412 @@
+<?php
+include_once '../functions/functions.php';
+if(!isset($_SESSION['user'])){
+    header("Location: ../login.php");
+    exit;
+}
+
+$getModules = new Settings();
+$modules = $getModules->getModules();
+
+$getClasses = new Settings();
+$classes = $getClasses->getClasses();
+
+$getExamCalendarEntries = new Settings();
+$calendars = $getExamCalendarEntries->getExamCalendarEntries();
+
+$getUserProfile = new User();
+$user_details = $getUserProfile-> getUserProfile();
+
+if (isset($_GET['id'])) {
+$id = $_GET['id'];
+$deleteExamCalendarEntry = new Settings();
+$deleteExamCalendarEntry = $deleteExamCalendarEntry->deleteExamCalendarEntry($id);
+
+}
+
+if (isset($_POST['add_entry'])) {
+  $class_id = $_POST['class_id'];
+  $modules_id = $_POST['modules_id'];
+  $time_from = $_POST['time_from'];
+  $time_to = $_POST['time_to'];
+  $exam_date = $_POST['exam_date'];
+
+  $addExamCalendarEntry = new Settings();
+  $addExamCalendarEntry = $addExamCalendarEntry->addExamCalendarEntry($class_id, $modules_id, $time_from, $time_to, $exam_date);
+
+}
+
+if (isset($_POST['edit_entry'])) {
+  $entry_id = $_POST['entry_id'];
+  $class_id = $_POST['class_id'];
+  $modules_id = $_POST['modules_id'];
+  $time_from = $_POST['time_from'];
+  $time_to = $_POST['time_to'];
+  $exam_date = $_POST['exam_date'];
+
+  $editExamCalendarEntry = new Settings();
+  $editExamCalendarEntry = $editExamCalendarEntry->editExamCalendarEntry($entry_id, $class_id, $modules_id, $time_from, $time_to, $exam_date);
+
+}
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Exam Calendar | MCA</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+  <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+<?php include"side-bar.php"; ?>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+<?php include 'header.php';  ?>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb float-right">
+    <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Exam Calendar</li>
+  </ol>
+</nav>
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <h1 class="h3 mb-4 text-gray-800">Exam Calendar</h1>
+          
+
+        </div>
+        <!-- /.container-fluid -->
+
+<div class="row container-fluid">
+  <div class="col-md-12">
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-outline-primary btn-block" data-toggle="modal" data-target="#exampleModal">
+  Add Exam Calendar Entry <i class="fas fa-plus"></i>
+</button>
+
+  <!-- Basic Card Example -->
+    <div class="card shadow mb-4">
+      <div class="card-body">
+          <?php
+            if(isset($_SESSION["entry_updated"]) && $_SESSION["entry_updated"]==true)
+                  { ?>
+            <div class="alert alert-success" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Success! </strong> Exam Calendar Entry updated Successfully
+            </div><?php
+            unset($_SESSION["entry_updated"]);
+            header('Refresh: 4; URL= exam-calendar.php');
+                      }
+              ?>
+
+          <?php
+            if(isset($_SESSION["entry_added"]) && $_SESSION["entry_added"]==true)
+                  { ?>
+            <div class="alert alert-success" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Success! </strong> Exam Calendar Entry added Successfully
+            </div><?php
+            unset($_SESSION["entry_added"]);
+            header('Refresh: 4; URL= exam-calendar.php');
+                      }
+              ?>
+
+          <?php
+            if(isset($_SESSION["entry_deleted"]) && $_SESSION["entry_deleted"]==true)
+                  { ?>
+            <div class="alert alert-warning" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Success! </strong> Exam Calendar Entry Deleted Successfully
+            </div><?php
+            unset($_SESSION["entry_deleted"]);
+            header('Refresh: 4; URL= exam-calendar.php');
+                      }
+              ?>
+              <div class="table-responsive">
+        <?php
+        $editModal = 0;
+        $deleteModal = 0;
+        if(isset($calendars) && count($calendars)>0){ 
+          ?>
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>Class</th>
+                      <th>Module</th>
+                      <th>Date</th>
+                      <th>Time From</th>
+                      <th>Time To</th>
+                      <th>Action</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+          <?php
+
+          foreach($calendars as $calendar){ 
+            $editModal++;
+            $deleteModal++;
+          ?>
+                    <tr>
+                      <td><?php echo $calendar['class']; ?></td>
+                      <td><?php echo $calendar['module']; ?></td>
+                      <td><?php $date = date_create($calendar['exam_date']); echo date_format($date,"d, M Y"); ?></td>
+                      <td><?php $date = date_create($calendar['time_from']); echo date_format($date,"h:i A"); ?></td>
+                      <td><?php $date = date_create($calendar['time_to']); echo date_format($date,"h:i A"); ?></td>
+                      <td><i class="fas fa-edit text-gray-800"></i> <a data-toggle="modal" data-target="#editModal<?php echo $editModal; ?>" href="#">Edit</a></td>
+                      <td data-toggle="modal" data-target="#deleteModal<?php echo $deleteModal; ?>"><i class="fas fa-trash text-gray-800"></i> Delete</td>
+                    </tr>
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal<?php echo $deleteModal; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <a href="exam-calendar.php?id=<?php echo $calendar['id']; ?>"><button style="margin-right: 20px;" class="btn btn-danger">Yes</button></a> <button data-dismiss="modal" class="btn btn-success">No</button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal<?php echo $editModal; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit <?php echo $calendar['class']; ?>'s Entry</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+      <form action="exam-calendar.php" method="POST">
+        <input type="hidden" name="entry_id" value="<?php echo $calendar['id']; ?>">
+        <label>Select Class</label>
+          <select class="custom-select" name="class_id" onchange="showModule(this.value)" id="class_id" required="">
+              <option value="<?php echo $calendar['classes_id']; ?>"><?php echo $calendar['class']; ?></option>
+            <?php
+              if(isset($classes) && count($classes)>0){
+                foreach($classes as $class){ ?>
+                  <option value="<?php echo $class['id']; ?>"><?php echo $class['name']; ?></option>
+                <?php
+                  
+                }
+              }
+            ?>
+          </select>
+        <br><br>
+
+        <label>Select Subject/Module</label>
+        <select class="custom-select" name="modules_id" id="module_name" required="">
+          <option value="<?php echo $calendar['modules_id']; ?>"><?php echo $calendar['module']; ?></option>
+        </select>
+        <br><br>
+
+          <div style="padding-top: 10px;" class="form-group">
+            <label for="exampleInputEmail1">Date</label>
+            <input type="date" name="exam_date" class="form-control" value="<?php echo $calendar['exam_date']; ?>">
+          </div>
+
+            <div style="padding-top: 15px;" class="row">
+              <div class="col">
+                <label for="inputEmail4">Time From:</label>
+                <input type="time" name="time_from" class="form-control" value="<?php echo $calendar['time_from']; ?>">
+                </div>
+                <div class="col">
+                <label for="inputEmail4">time To:</label>
+                <input type="time" name="time_to" class="form-control" value="<?php echo $calendar['time_to']; ?>">
+                </div>
+              </div>
+              <br>
+
+      <button type="submit" name="edit_entry" class="btn btn-primary">Edit Entry <i class="fas fa-edit"></i></button>
+      </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+          <?php
+            
+          } ?>
+
+                  </tbody>
+                </table>
+                <?php
+                      }else {
+                        echo "No Exam Calendar Entries Available";
+                      }
+        ?>
+              </div>
+      </div>
+    </div>
+    <!--End of Basic Card Example -->
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Exam Calendar Entry <i class="fas fa-plus"></i></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-1"></div>
+          <div class="col-md-10">
+
+      <form action="exam-calendar.php" method="POST">
+        <label>Select Class</label>
+          <select class="custom-select" name="class_id" onchange="showModules(this.value)" id="classes_id" required="">
+              <option style="color: black;" selected="">Select Class.....</option>
+            <?php
+              if(isset($classes) && count($classes)>0){
+                foreach($classes as $class){ ?>
+                  <option value="<?php echo $class['id']; ?>"><?php echo $class['name']; ?></option>
+                <?php
+                  
+                }
+              }
+            ?>
+          </select>
+        <br><br>
+
+        <label>Select Subject/Module</label>
+        <select class="custom-select" name="modules_id" id="modules_name" required="">
+          <option VALUE="">Select Module</option>  
+        </select>
+        <br><br>
+
+          <div style="padding-top: 10px;" class="form-group">
+            <label for="exampleInputEmail1">Date</label>
+            <input type="date" name="exam_date" class="form-control" placeholder="Enter Date" required="">
+          </div>
+
+            <div style="padding-top: 10px;" class="row">
+              <div class="col">
+                <label for="inputEmail4">Time From:</label>
+                <input type="time" name="time_from" class="form-control"  required="">
+                </div>
+                <div class="col">
+                <label for="inputEmail4">time To:</label>
+                <input type="time" name="time_to" class="form-control" required="">
+                </div>
+              </div>
+              <br>
+
+      <button type="submit" name="add_entry" class="btn btn-primary">Add Entry <i class="fas fa-plus"></i></button>
+      </form>
+
+
+          </div>
+          <div class="col-md-1"></div>
+        </div>
+      </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  </div>
+</div>
+
+      </div>
+      <!-- End of Main Content -->
+
+<script type="text/javascript">
+    window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove(); 
+    });
+}, 4000);
+  </script>
+
+<script type="text/javascript">
+function showModule(val) {
+  // alert(val);
+  $.ajax({
+  type: "POST",
+  url: "filter-results.php",
+  data:'class_id='+val,
+  success: function(data){
+    // alert(data);
+    $("#module_name").html(data);
+  }
+  });
+  
+}
+</script>
+
+
+<script type="text/javascript">
+    window.setTimeout(function() {
+    $(".alert").fadeTo(500, 0).slideUp(500, function(){
+        $(this).remove(); 
+    });
+}, 4000);
+  </script>
+
+<script type="text/javascript">
+function showModules(val) {
+  // alert(val);
+  $.ajax({
+  type: "POST",
+  url: "filter-more-results.php",
+  data:'classes_id='+val,
+  success: function(data){
+    // alert(data);
+    $("#modules_name").html(data);
+  }
+  });
+  
+}
+</script>
+
+<?php include 'footer.php';  ?>

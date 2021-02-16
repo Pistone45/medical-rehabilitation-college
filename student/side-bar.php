@@ -6,7 +6,7 @@
         <div class="sidebar-brand-icon rotate-n-15">
           
         </div>
-        <div class="sidebar-brand-text mx-3">MRC College</div>
+        <div class="sidebar-brand-text mx-3">MRC</div>
       </a>
 
       <!-- Divider -->
@@ -27,7 +27,13 @@
         Interface
       </div>
 
-      <!-- Nav Item - Pages Collapse Menu -->
+      <!-- Nav Item - Grades Collapse Menu -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="information.php">
+          <i class="fas fa-info"></i>
+          <span>Your Information</span>
+        </a>
+      </li>
 
       <!-- Nav Item - Grades Collapse Menu -->
       <li class="nav-item">
@@ -73,6 +79,21 @@
             <h6 class="collapse-header">Manage Grades:</h6>
             <a class="collapse-item" href="notifications.php"><i class="fas fa-bell"></i> View notifications</a>
             <a class="collapse-item" href="messages.php"><i class="fas fa-envelope"></i> View Messages</a>
+          </div>
+        </div>
+      </li>
+
+            <!-- Nav Item - Calendar Menu -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsecal" aria-expanded="true" aria-controls="collapsecal">
+          <i class="fas fa-calendar"></i>
+          <span>Calendars</span>
+        </a>
+        <div id="collapsecal" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">MANAGE CALENDARS:</h6>
+            <a class="collapse-item" href="exam-calendar.php"><i class="fas fa-calendar-week"></i> Exam Calendar</a> 
+            <a class="collapse-item" href="timetable.php"><i class="fas fa-calendar-week"></i> Timetable</a>       
           </div>
         </div>
       </li>

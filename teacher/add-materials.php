@@ -11,6 +11,17 @@ $user_details = $getUserProfile-> getUserProfile();
 $getAllClasses = new User();
 $classes = $getAllClasses-> getAllClasses();
 
+$getSemesters = new Settings();
+$semesters = $getSemesters->getSemesters();
+
+$getCurrentSettings = new Settings();
+$settings = $getCurrentSettings->getCurrentSettings();
+
+$year =(int)$settings['year'];
+//from academic_year get the last 10 years
+$ten_years = $year-10;
+$years =range($year,$ten_years,-1);
+
 if (isset($_POST['submit'])) {
   $statusMsg = '';
   //file upload path
@@ -26,10 +37,9 @@ if (isset($_POST['submit'])) {
           //upload file to server
           if(move_uploaded_file($_FILES["file"]["tmp_name"], $targetFilePath)){
               //$statusMsg = "The file ".$fileName. " has been uploaded.";
-            $getCurrentSettings = new Settings();
-            $settings = $getCurrentSettings-> getCurrentSettings();
-            $year = $settings['year'];
-            $semester_id = $settings['semester_id'];
+
+            $year = $_POST['year'];
+            $semester_id = $_POST['semester_id'];
             $material = $targetFilePath;
             $classes_id = $_POST['class_id'];
             $modules_id = $_POST['modules_id'];
@@ -117,7 +127,7 @@ if (isset($_POST['submit'])) {
               <strong>Success! </strong> You have Successfully Added a Learning Material for This Class and Module
             </div>  <?php
             unset($_SESSION["material_added"]);
-            header('Refresh: 5; URL= view-materials.php');
+            header('Refresh: 5; URL= filter-materials.php');
                       }
               ?>
             <?php
@@ -184,6 +194,33 @@ if (isset($_POST['submit'])) {
           <div class="invalid-feedback">Please Select Material</div>
         </div>
         <br><br>
+      <label>Select Year</label>
+        <select required="" name="year" class="form-control">
+           <?php
+            if(isset($years) && count($years)>0){
+              foreach($years as $year){ ?>
+                <option value="<?php echo $year; ?>"><?php echo $year; ?></option>
+              <?php
+                
+              }
+            }
+          ?>
+        </select>
+      <br>
+      <label>Select Semester</label>
+        <select required="" name="semester_id" class="form-control">
+           <?php
+            if(isset($semesters) && count($semesters)>0){
+              foreach($semesters as $semester){ ?>
+                <option value="<?php echo $semester['id']; ?>"><?php echo $semester['name']; ?></option>
+              <?php
+                
+              }
+            }
+          ?>
+        </select>
+      <br>
+
         <button type="submit" name="submit" class="btn btn-success"><i class="fas fa-plus"></i> Add Material <i class="fas fa-paperclip"></i></button>
         </form>
       </div>

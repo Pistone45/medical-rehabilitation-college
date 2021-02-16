@@ -47,7 +47,7 @@
               <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-bell fa-fw"></i>
                 <!-- Counter - Alerts -->
-                <span class="badge badge-danger badge-counter"><?php echo $notification['noti']; ?></span>
+                <span class="badge <?php if($notification['noti'] == 0){  ?>badge-primary<?php  }else{ ?>badge-danger<?php  } ?> badge-counter"><?php echo $notification['noti']; ?></span>
               </a>
               <!-- Dropdown - Alerts -->
               <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
@@ -90,7 +90,7 @@
               <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fas fa-envelope fa-fw"></i>
                 <!-- Counter - Messages -->
-                <span class="badge badge-danger badge-counter"><?php echo $count_unread['message'] ?></span>
+                <span class="badge <?php if($count_unread['message'] == 0){  ?>badge-primary<?php  }else{ ?>badge-danger<?php  } ?> badge-counter"><?php echo $count_unread['message'] ?></span>
               </a>
               <!-- Dropdown - Messages -->
               <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="messagesDropdown">
@@ -135,7 +135,7 @@
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $user_details['firstname'].' '.$user_details['lastname']; ?></span>
-                <img class="img-profile rounded-circle" src="<?php echo $user_details['picture']; ?>">
+                <img class="img-profile rounded-circle" src="<?php if($user_details['picture'] == ''){ echo "../images/avatar.png"; }else{ echo $user_details['picture']; } ?>">
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">

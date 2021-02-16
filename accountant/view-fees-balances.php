@@ -13,6 +13,16 @@ if (isset($_GET['id'])) {
 
 }
 
+if (isset($_POST['add_installment'])) {
+  $amount = $_POST['amount'];
+  $fees_id = $_POST['fees_id'];
+
+  $addBalanceInstallment = new Accountant();
+  $addBalanceInstallment->addBalanceInstallment($amount, $fees_id);
+
+}
+
+
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
 
@@ -90,6 +100,18 @@ $balances = $getStudentsBalances->getStudentsBalances();
             header('Refresh: 4; URL= view-fees-balances.php');
                       }
               ?>
+
+             <?php
+            if(isset($_SESSION["imstallment_added"]) && $_SESSION["imstallment_added"]==true)
+                  { ?>
+            <div class="alert alert-success" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Success! </strong> You have Successfully Added an Installment to a Balance
+            </div>  <?php
+            unset($_SESSION["imstallment_added"]);
+            header('Refresh: 4; URL= view-fees-balances.php');
+                      }
+              ?>             
               <div class="table-responsive">
         <?php
         if(isset($balances) && count($balances)>0){
@@ -104,6 +126,7 @@ $balances = $getStudentsBalances->getStudentsBalances();
                       <th>Balance</th>
                       <th>Date Recorded</th>
                       <th>Action</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -114,12 +137,42 @@ $balances = $getStudentsBalances->getStudentsBalances();
                     <tr>
                       <td><?php echo $balance['students_student_no']; ?></td>
                       <td><?php echo $balance['name']; ?></td>
-                      <td>class</td>
+                      <td><?php echo $balance['class']; ?></td>
                       <td>K<?php echo number_format($balance['balance']); ?></td>
                       <td><?php $date = date_create($balance['date_recorded']); echo date_format($date,"d, M Y"); ?></td>
+                      <td><button data-toggle="modal" data-target="#installModal<?php echo $i; ?>" class="btn btn-primary">Add Installment</button></td>
                       <td><a href="view-fees-balances.php?id=<?php echo $balance['students_student_no']; ?>"><i class="fas fa-check-circle fa-1x"></i> Resolve Fees</a></td>
-
                     </tr>
+
+<!-- Installment Modal -->
+<div class="modal fade" id="installModal<?php echo $i; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Installment to <?php echo $balance['name']; ?>'s Balance</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+      <form action="view-fees-balances.php" method="POST">
+      <input type="hidden" name="fees_id" value="<?php echo $balance['id']; ?>">
+      <div class="form-group">
+        <label for="exampleInputEmail1">Amount</label>
+        <input type="number" name="amount" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Installment Amount">
+        <small style="color: red;" id="emailHelp" class="form-text text-muted">System will deduct this amount from the current Balance</small>
+      </div>
+        <button type="submit" name="add_installment" class="btn btn-primary">Add Installment <i class="fas fa-plus"></i></button>
+      </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
           <?php
             

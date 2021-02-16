@@ -6,7 +6,7 @@
         <div class="sidebar-brand-icon rotate-n-15">
           
         </div>
-        <div class="sidebar-brand-text mx-3">MRC College</div>
+        <div class="sidebar-brand-text mx-3">MRC</div>
       </a>
 
       <!-- Divider -->
@@ -38,7 +38,6 @@
         <div id="collapsegrades" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">Manage Fees:</h6>
-            <a class="collapse-item" href="fees-balances.php"><i class="far fa-clipboard"></i> Record Fees</a>
             <a class="collapse-item" href="fees-balances.php"><i class="far fa-clipboard"></i> Record Fees Balances</a>
             <a class="collapse-item" href="view-fees-balances.php"><i class="fas fa-binoculars"></i> View Fees Balances</a>
           </div>

@@ -78,13 +78,13 @@ $deleteTeacher = $deleteTeacher->deleteTeacher($id);
     <div class="card shadow mb-4">
       <div class="card-body">
           <?php
-            if(isset($_SESSION["teacher-deleted"]) && $_SESSION["teacher-deleted"]==true)
+            if(isset($_SESSION["accountant_deleted"]) && $_SESSION["accountant_deleted"]==true)
                   { ?>
             <div class="alert alert-success" role="alert">
               <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <strong>Success! </strong> Teacher Deleted Successfully
+              <strong>Success! </strong> Accountant Deleted Successfully
             </div>  <?php
-            unset($_SESSION["teacher-deleted"]);
+            unset($_SESSION["accountant_deleted"]);
             header('Refresh: 4; URL= view-teachers.php');
                       }
               ?>
@@ -128,7 +128,7 @@ $deleteTeacher = $deleteTeacher->deleteTeacher($id);
                 </table>
                 <?php
                       }else {
-                        echo "No Accountants Available";
+                        echo "No Accountants Available";  ?> <a href="add-accountant.php"><button class="btn btn-outline-primary">Add Accountant <i class="fas fa-plus"></i></button></a><?php
                       }
         ?>
               </div>

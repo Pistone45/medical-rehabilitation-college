@@ -94,8 +94,8 @@ $balances = $getStudentsBalances->getStudentsBalances();
                     <tr>
                       <td><?php echo $balance['students_student_no']; ?></td>
                       <td><?php echo $balance['name']; ?></td>
-                      <td>class</td>
-                      <td><?php echo $balance['balance']; ?></td>
+                      <td><?php echo $balance['class']; ?></td>
+                      <td>K<?php echo number_format($balance['balance']); ?></td>
                       <td><?php $date = date_create($balance['date_recorded']); echo date_format($date,"d, M Y"); ?></td>
 
                     </tr>

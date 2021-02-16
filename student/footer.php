@@ -4,7 +4,7 @@
       <footer class="sticky-footer bg-white">
         <div class="container my-auto">
           <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Medical Rehabilitation College <?php echo DATE('Y'); ?></span>
+            <span>Copyright &copy; MRC College <?php echo DATE('Y'); ?></span>
           </div>
         </div>
       </footer>
@@ -54,6 +54,7 @@
 
   <!-- Page level custom scripts -->
   <script src="../js/demo/datatables-demo.js"></script>
+  <!-- <script src="../js/jquery-1.10.1.min.js"></script> -->
 
 </body>
 

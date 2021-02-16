@@ -22,7 +22,7 @@ if (isset($_POST['login'])) {
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Medical Rehabilitation College| Login</title>
+  <title>MRC | Login</title>
 
   <!-- Custom fonts for this template-->
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -49,10 +49,9 @@ if (isset($_POST['login'])) {
               <div class="col-lg-12">
                 <div class="p-5">
                   <div class="text-center">
-                    <img width="100" height="95" src="images/logo.png">
-                    <h1 class="h4 text-gray-900 mb-4">Medical Rehabilitation College</h1>
+                    <img style="padding-bottom: 10px;" width="135" height="135" src="images/logo.jpg">
                   </div>
-                  <form action="" method="POST">
+                  <form action="login.php" method="POST">
                     <div class="form-group">
                       <input type="text" name="username" class="form-control" id="Username" placeholder="Enter Username..." required="">
                     </div>

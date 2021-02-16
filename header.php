@@ -49,7 +49,6 @@ switch ($page) {
           ?>
           <ul>
           <li class="active"><a href="index.php">Home</a></li>
-          <li><a href="about-us.php">About Us</a></li>
           <li><a href="anouncements.php">Anouncements</a></li>
           <li><a href="our-team.php">Our Team</a></li>
           <li><a href="contact-us.php">Contact Us</a></li>
@@ -61,7 +60,6 @@ switch ($page) {
           ?>
           <ul>
           <li><a href="index.php">Home</a></li>
-          <li class="active"><a href="about-us.php">About Us</a></li>
           <li><a href="anouncements.php">Anouncements</a></li>
           <li><a href="our-team.php">Our Team</a></li>
           <li><a href="contact-us.php">Contact Us</a></li>
@@ -73,7 +71,6 @@ switch ($page) {
           ?>
           <ul>
           <li><a href="index.php">Home</a></li>
-          <li><a href="about-us.php">About Us</a></li>
           <li class="active"><a href="anouncements.php">Anouncements</a></li>
           <li><a href="our-team.php">Our Team</a></li>
           <li><a href="contact-us.php">Contact Us</a></li>
@@ -85,7 +82,6 @@ switch ($page) {
           ?>
           <ul>
           <li><a href="index.php">Home</a></li>
-          <li><a href="about-us.php">About Us</a></li>
           <li><a href="anouncements.php">Anouncements</a></li>
           <li class="active"><a href="our-team.php">Our Team</a></li>
           <li><a href="contact-us.php">Contact Us</a></li>
@@ -97,7 +93,6 @@ switch ($page) {
           ?>
           <ul>
           <li><a href="index.php">Home</a></li>
-          <li><a href="about-us.php">About Us</a></li>
           <li><a href="anouncements.php">Anouncements</a></li>
           <li><a href="our-team.php">Our Team</a></li>
           <li class="active"><a href="contact-us.php">Contact Us</a></li>
@@ -109,7 +104,6 @@ switch ($page) {
           ?>
           <ul>
           <li class="active"><a href="index.php">Home</a></li>
-          <li><a href="about-us.php">About Us</a></li>
           <li><a href="anouncements.php">Anouncements</a></li>
           <li><a href="our-team.php">Our Team</a></li>
           <li><a href="contact-us.php">Contact Us</a></li>

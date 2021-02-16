@@ -19,6 +19,8 @@ $markNotificationRead = $markNotificationRead->markNotificationRead($id);
 
 }
 
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

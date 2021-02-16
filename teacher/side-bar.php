@@ -6,7 +6,7 @@
         <div class="sidebar-brand-icon rotate-n-15">
           
         </div>
-        <div class="sidebar-brand-text mx-3">MRC College</div>
+        <div class="sidebar-brand-text mx-3">MRC</div>
       </a>
 
       <!-- Divider -->
@@ -29,7 +29,7 @@
 
       <!-- Nav Item - Pages Collapse Menu -->
 
-      <!-- Nav Item - Utilities Collapse Menu -->
+      <!-- Nav Item - Grades Collapse Menu -->
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsegrades" aria-expanded="true" aria-controls="collapsegrades">
           <i class="fas fa-graduation-cap"></i>
@@ -59,6 +59,20 @@
         </div>
       </li>
 
+            <!-- Nav Item -Administration Menu -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsecal" aria-expanded="true" aria-controls="collapsecal">
+          <i class="fas fa-calendar"></i>
+          <span>Calendars</span>
+        </a>
+        <div id="collapsecal" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">MANAGE CALENDARS:</h6>
+            <a class="collapse-item" href="exam-calendar.php"><i class="fas fa-calendar-check"></i> Exam Calendar</a> 
+            <a class="collapse-item" href="timetable.php"><i class="fas fa-calendar-check"></i> Timetable</a>          
+          </div>
+        </div>
+      </li>
       
       <!-- Divider -->
       <hr class="sidebar-divider d-none d-md-block">

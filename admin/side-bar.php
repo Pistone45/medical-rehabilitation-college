@@ -6,7 +6,7 @@
         <div class="sidebar-brand-icon rotate-n-15">
           
         </div>
-        <div class="sidebar-brand-text mx-3">MRC College</div>
+        <div class="sidebar-brand-text mx-3">MRC</div>
       </a>
 
       <!-- Divider -->
@@ -93,6 +93,37 @@
         </div>
       </li>
 
+            <!-- Nav Item -Administration Menu -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsecal" aria-expanded="true" aria-controls="collapsecal">
+          <i class="fas fa-calendar"></i>
+          <span>Calendars</span>
+        </a>
+        <div id="collapsecal" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">MANAGE CALENDARS:</h6>
+            <a class="collapse-item" href="exam-calendar.php"><i class="fas fa-calendar-plus"></i> Exam Calendar</a> 
+            <a class="collapse-item" href="timetable.php"><i class="fas fa-calendar-plus"></i> Timetable</a>          
+          </div>
+        </div>
+      </li>
+
+
+    <!-- Nav Item - Utilities Collapse Menu -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsegrades" aria-expanded="true" aria-controls="collapsegrades">
+          <i class="fas fa-graduation-cap"></i>
+          <span>Grages</span>
+        </a>
+        <div id="collapsegrades" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Manage Grades:</h6>
+            <a class="collapse-item" href="filter-view-grades.php"><i class="fas fa-binoculars"></i> Edit Grades</a>
+          </div>
+        </div>
+      </li>
+
+
       <!-- Divider -->
       <hr class="sidebar-divider d-none d-md-block">
 
@@ -106,6 +137,7 @@
           <div class="bg-white py-2 collapse-inner rounded">
             <h6 class="collapse-header">CONTENT AND SETTINGS:</h6>
             <a class="collapse-item" href="the-team.php"><i class="fas fa-users"></i> The Team</a>
+            <a class="collapse-item" href="classes.php"><i class="fab fa-buffer"></i> Classes</a>
             <a class="collapse-item" href="view-semesters.php"><i class="far fa-eye"></i> Semesters</a>            
             <a class="collapse-item" href="view-announcements.php"><i class="fas fa-bullhorn"></i> Announcements</a>
           </div>

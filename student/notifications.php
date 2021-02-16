@@ -142,7 +142,7 @@ $markNotificationRead = $markNotificationRead->markNotificationRead($id);
                           ?>
                           <div align="center">
                           <p>You don't have any Notifications</p>
-                          <i style="font-size: 100px;" class="fas fa-bell"></i>
+                          <i style="font-size: 90px;" class="fas fa-bell"></i>
                           </div> 
                           <?php
                       }

@@ -11,6 +11,9 @@ $user_details = $getUserProfile-> getUserProfile();
 if (isset($_POST['filter'])) {
   $class_id = $_POST['class_id'];
   $modules_id = $_POST['modules_id'];
+  $_SESSION['year'] = $_POST['year'];
+  $_SESSION['semester_id'] = $_POST['semester_id'];
+
   $getStudentsPerClass = new Teacher();
   $students = $getStudentsPerClass->getStudentsPerClass($class_id);
 
@@ -23,11 +26,8 @@ $grade = $_POST['grade'];
 $student_no = $_POST['student_no'];
 $class_id = $_POST['class_id'];
 $modules_id = $_POST['modules_id'];
-
-$getCurrentSettings = new Settings();
-$settings = $getCurrentSettings-> getCurrentSettings();
-$year = $settings['year'];
-$semester_id = $settings['semester_id'];
+$year = $_SESSION['year'];
+$semester_id = $_SESSION['semester_id'];
 $modules_id = $_POST['modules_id'];
 
 $recordGrade = new Teacher();
@@ -160,8 +160,7 @@ $recordGrade = $recordGrade->recordGrade($grade, $student_no, $class_id, $year, 
   <input type="text" hidden="" name="modules_id" class="form-control" value="<?php if(isset($_POST['modules_id'])){ echo $modules_id = $_POST['modules_id'];} ?>">
   <input type="text" hidden="" name="class_id" class="form-control" value="<?php if(isset($_POST['class_id'])){ echo $class_id = $_POST['class_id'];} ?>">
   <button type="submit" name="record" class="btn btn-primary btn-block"><i class="far fa-clipboard"></i> Record Grades</button>
-
-    </form>
+  </form>
                 <?php
                       }else {
                         echo "No Students Available for this Class "; 
@@ -181,4 +180,61 @@ $recordGrade = $recordGrade->recordGrade($grade, $student_no, $class_id, $year, 
 </div>
 <!-- End of Main Content -->
 
-<?php include 'footer.php';  ?>
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; MRC College <?php echo DATE('Y'); ?></span>
+          </div>
+        </div>
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="../functions/logout.php">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="../vendor/jquery/jquery.min.js"></script>
+  <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="../js/sb-admin-2.min.js"></script>
+  <script src="../vendor/datatables/jquery.dataTables.min.js"></script>
+  <script src="../vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+  <!-- Page level custom scripts -->
+
+
+</body>
+
+</html>

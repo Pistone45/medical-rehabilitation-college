@@ -19,6 +19,22 @@ $year =(int)$settings['year'];
 $ten_years = $year-10;
 $years =range($year,$ten_years,-1);
 
+if (isset($_POST['filter'])) {
+  $year = $_POST['year'];
+  $semester_id = $_POST['semester_id'];
+
+  $_SESSION['year'] = $year;
+  $_SESSION['semester_id'] = $semester_id;
+
+  $getStudentClass = new Students();
+  $class = $getStudentClass-> getStudentClass();
+  $classes_id = $class['classes_id'];
+
+  $getAllStudentsGrades = new Students();
+  $grades = $getAllStudentsGrades->getAllStudentsGrades($year, $semester_id, $classes_id);
+
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -77,7 +93,31 @@ $years =range($year,$ten_years,-1);
   <!-- Basic Card Example -->
     <div class="card shadow mb-4">
       <div class="card-body">
-      <form action="view-grades.php" method="POST">
+        <?php
+        if(isset($_SESSION["balance_found"]) && $_SESSION["balance_found"]==true)
+              { ?>
+        <div class="alert alert-danger" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <strong>Fees Balance Found! </strong> Please settle your Fees Balance first
+        </div>  <?php
+        unset($_SESSION["balance_found"]);
+        //header('URL= filter-view-grades.php');
+                  }
+          ?>
+
+        <?php
+        if(isset($_SESSION["no_balance"]) && $_SESSION["no_balance"]==true)
+              { ?>
+        <div class="alert alert-success" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <strong>No Balance! </strong> Proceed
+        </div>  <?php
+        unset($_SESSION["no_balance"]);
+         header('Refresh: 2; URL= view-grades.php');
+                  }
+          ?>
+
+      <form action="filter-grades.php" method="POST">
       <label>Select Year</label>
         <select required="" name="year" class="form-control">
            <?php

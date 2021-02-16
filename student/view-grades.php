@@ -8,9 +8,9 @@ if(!isset($_SESSION['user'])){
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
 
-if (isset($_POST['filter'])) {
-  $year = $_POST['year'];
-  $semester_id = $_POST['semester_id'];
+if (isset($_SESSION['year'])) {
+  $year = $_SESSION['year'];
+  $semester_id = $_SESSION['semester_id'];
 
   $getStudentClass = new Students();
   $class = $getStudentClass-> getStudentClass();
@@ -88,7 +88,7 @@ if (isset($_POST['filter'])) {
           <strong>Fees Balance Found! </strong> Please settle your Fees Balance first
         </div>  <?php
         unset($_SESSION["balance_found"]);
-        //header('Refresh: 5; URL= filter-view-grades.php');
+        header('URL= filter-view-grades.php');
                   }
           ?>
         <div class="table-responsive">
@@ -129,7 +129,7 @@ if (isset($_POST['filter'])) {
                           ?> <a href="filter-grades.php"> <button class="btn btn-primary">Back <i style="font-size: 18px;" class="fas fa-undo"></i></button></a>
                           <div align="center">
                           <p>No Grades Available for Your Class and Module</p>
-                          <i style="font-size: 100px;" class="far fa-meh-blank"></i>
+                          <i style="font-size: 90px;" class="far fa-meh-blank"></i>
                           </div> 
                           <?php
                       }

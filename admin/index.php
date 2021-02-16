@@ -14,6 +14,9 @@ $users = $countAllUsers-> countAllUsers();
 $countAllStudents = new User();
 $students = $countAllStudents-> countAllStudents();
 
+$countAllTeachers = new User();
+$teachers = $countAllTeachers-> countAllTeachers();
+
 $countAllStudentFeesBalances = new Accountant();
 $feesBalances = $countAllStudentFeesBalances-> countAllStudentFeesBalances();
 
@@ -37,6 +40,7 @@ $feesBalances = $countAllStudentFeesBalances-> countAllStudentFeesBalances();
 
   <!-- Custom styles for this template-->
   <link href="../css/sb-admin-2.min.css" rel="stylesheet">
+  <script src="../js/popper.min.js"></script>
 
 </head>
 
@@ -86,31 +90,39 @@ $feesBalances = $countAllStudentFeesBalances-> countAllStudentFeesBalances();
               </div>
             </div>
 
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Earnings (Annual)</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
 
             <!-- Earnings (Monthly) Card Example -->
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card border-left-info shadow h-100 py-2">
+                <a href="view-teachers.php">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Teachers</div>
+                      <div class="row no-gutters align-items-center">
+                        <div class="col-auto">
+                          <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><?php echo $teachers['teacher']; ?></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+                </a>
+              </div>
+            </div>
+
+
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
                 <a href="view-students.php">
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Number of Students</div>
+                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Students</div>
                       <div class="row no-gutters align-items-center">
                         <div class="col-auto">
                           <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><?php echo $students['student_no']; ?></div>
@@ -126,6 +138,7 @@ $feesBalances = $countAllStudentFeesBalances-> countAllStudentFeesBalances();
               </div>
             </div>
 
+
             <!-- Pending Requests Card Example -->
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card border-left-warning shadow h-100 py-2">
@@ -133,7 +146,7 @@ $feesBalances = $countAllStudentFeesBalances-> countAllStudentFeesBalances();
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Number of Users</div>
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">System Users</div>
                       <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $users['user_id']; ?></div>
                     </div>
                     <div class="col-auto">
@@ -209,7 +222,7 @@ $feesBalances = $countAllStudentFeesBalances-> countAllStudentFeesBalances();
 var myVar;
 
 function myFunction() {
-  myVar = setTimeout(showPage, 1000);
+  myVar = setTimeout(showPage, 800);
 }
 
 function showPage() {

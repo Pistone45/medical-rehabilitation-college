@@ -8,9 +8,6 @@ if(!isset($_SESSION['user'])){
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
 
-$getStudentsBalances = new Accountant();
-$balances = $getStudentsBalances->getStudentsBalances();
-
 $getAllFeesBalancesPerStudent = new Students();
 $balances = $getAllFeesBalancesPerStudent->getAllFeesBalancesPerStudent();
 
@@ -97,7 +94,7 @@ $balances = $getAllFeesBalancesPerStudent->getAllFeesBalancesPerStudent();
                     <tr>
                       <td><?php echo $balance['students_student_no']; ?></td>
                       <td><?php echo $balance['name']; ?></td>
-                      <td><?php echo $balance['balance']; ?></td>
+                      <td>K<?php echo number_format($balance['balance']); ?></td>
                       <td><?php if($balance['status'] == 0){  ?><p style="color: green;">Balance Resolved</p>  <?php  }elseif($balance['status'] == 1){   ?><p style="color: red;">Outstanding Balance</p><?php  } ?></td>
                       <td><?php $date = date_create($balance['date_recorded']); echo date_format($date,"d, M Y"); ?></td>
 

@@ -143,7 +143,7 @@ $markMessageRead = $markMessageRead->markMessageRead($id);
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <form action="messages.php" method="POST">
           <input type="text" hidden="" name="id" value="<?php echo $message['id']; ?>">
-          <button type="submit" name="mark" class="btn btn-primary">Mark Read</button>
+          <?php if($message['status'] == 0){  ?><button type="submit" name="mark" class="btn btn-primary">Mark Read</button><?php  }else{} ?>
         </form>
       </div>
     </div>
@@ -162,7 +162,7 @@ $markMessageRead = $markMessageRead->markMessageRead($id);
                           ?>
                           <div align="center">
                           <p>You don't have any Messages</p>
-                          <i style="font-size: 100px;" class="fas fa-envelope"></i>
+                          <i style="font-size: 90px;" class="fas fa-envelope"></i>
                           </div> 
                           <?php
                       }

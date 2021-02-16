@@ -8,18 +8,20 @@ if(!isset($_SESSION['user'])){
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
 
+$getSemesters = new Settings();
+$semesters = $getSemesters->getSemesters();
+
+$getCurrentSettings = new Settings();
+$settings = $getCurrentSettings->getCurrentSettings();
+
+$year =(int)$settings['year'];
+//from academic_year get the last 10 years
+$ten_years = $year-10;
+$years =range($year,$ten_years,-1);
+
+
 $getAllClasses = new User();
 $classes = $getAllClasses-> getAllClasses();
-
-if (isset($_POST['record'])) {
-$balance = $_POST['balance'];
-$student_no = $_POST['student_no'];
-$remarks = $_POST['remarks'];
-
-$RecordFeesBalance = new Accountant();
-$RecordFeesBalance = $RecordFeesBalance->RecordFeesBalance($balance, $student_no, $remarks);
-
-}
 
 ?>
 <!DOCTYPE html>
@@ -99,6 +101,33 @@ $RecordFeesBalance = $RecordFeesBalance->RecordFeesBalance($balance, $student_no
         <option VALUE="">Select Module</option>  
       </select>
       <br><br>
+      <label>Select Year</label>
+        <select required="" name="year" class="form-control">
+           <?php
+            if(isset($years) && count($years)>0){
+              foreach($years as $year){ ?>
+                <option value="<?php echo $year; ?>"><?php echo $year; ?></option>
+              <?php
+                
+              }
+            }
+          ?>
+        </select>
+      <br>
+      <label>Select Semester</label>
+        <select required="" name="semester_id" class="form-control">
+           <?php
+            if(isset($semesters) && count($semesters)>0){
+              foreach($semesters as $semester){ ?>
+                <option value="<?php echo $semester['id']; ?>"><?php echo $semester['name']; ?></option>
+              <?php
+                
+              }
+            }
+          ?>
+        </select>
+      <br>
+
       <button type="submit" name="filter" class="btn btn-outline-success">Continue <i style="font-size: 18px;" class="fas fa-arrow-circle-right"></i></button>
       </form>
       </div>

@@ -8,10 +8,13 @@
             <div class="footer-info">
               <h3>MRC</h3>
               <p>
-                A108 Adam Street <br>
-                NY 535022, USA<br><br>
-                <strong>Phone:</strong> +265 5589 55488 55<br>
-                <strong>Email:</strong> info@example.com<br>
+                  P.O.Box 000
+                  Blantyre,
+                  Malawi<br><br>
+                <strong>Phone:</strong> +265 888888<br>
+                <strong>Phone:</strong> +265 888888<br>
+                <strong>Email:</strong> Info@mrc.com<br>
+                <strong>Email:</strong> principal@mrc.com<br>
               </p>
               <div class="social-links mt-3">
                 <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
@@ -26,23 +29,21 @@
           <div class="col-lg-2 col-md-6 footer-links">
             <h4>Useful Links</h4>
             <ul>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Home</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">About us</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Services</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="index.php">Home</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="announcements.php">Announcements</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="contact-us.php">Contact us</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="login.php">Login</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="our-team.php">Our Team</a></li>
             </ul>
           </div>
 
           <div class="col-lg-3 col-md-6 footer-links">
-            <h4>Our Services</h4>
+            <h4>Our Courses</h4>
             <ul>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Web Design</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Web Development</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Product Management</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Marketing</a></li>
-              <li><i class="bx bx-chevron-right"></i> <a href="#">Graphic Design</a></li>
-            </ul>
+              <li><i class="bx bx-chevron-right"></i> Computer Science</li>
+              <li><i class="bx bx-chevron-right"></i> IT Systems Support</li>
+              <li><i class="bx bx-chevron-right"></i> Financial Accounting</li>
+              <li><i class="bx bx-chevron-right"></i> Graphics Designing</li>            </ul>
           </div>
 
           <div class="col-lg-4 col-md-6 footer">
@@ -67,9 +68,10 @@
       <div class="copyright">
         &copy; Copyright <?php echo DATE('Y'); ?> <strong><span>MRC</span></strong>. All Rights Reserved
       </div>
+      <!---
       <div class="credits">
 
-        Designed and Developed by <a href="#">.....</a>
+        Designed and Developed by <a href="https://www.facebook.com/pistone.sanjama/">Pistone Sanjama</a>
       </div>
     </div>
   </footer><!-- End Footer -->

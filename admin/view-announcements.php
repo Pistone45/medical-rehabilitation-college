@@ -207,7 +207,7 @@ $deleteAnnouncement = $deleteAnnouncement->deleteAnnouncement($id);
                       }else { ?>
                           <div align="center">
                           <p>No Announcements Available, Add some <i class="fas fa-arrow-alt-circle-up"></i></p>
-                          <i style="font-size: 100px;" class="fas fa-bullhorn"></i>
+                          <i style="font-size: 90px;" class="fas fa-bullhorn"></i>
                           </div> 
                    <?php   }
         ?>

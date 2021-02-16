@@ -9,10 +9,15 @@ $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
 
 if (isset($_POST['filter'])) {
-  $class_id = $_POST['class_id'];
+  $year = $_POST['year'];
   $modules_id = $_POST['modules_id'];
-  $getStudentsGradesPerClass = new Teacher();
-  $students = $getStudentsGradesPerClass->getStudentsGradesPerClass($class_id, $modules_id);
+  $class_id = $_POST['class_id'];
+  $semester_id = $_POST['semester_id'];
+
+  $_SESSION['year'] = $year;
+  $_SESSION['modules_id'] = $modules_id;
+  $_SESSION['class_id'] = $class_id;
+  $_SESSION['semester_id'] = $semester_id;
 
   $getModuleName = new Teacher();
   $module = $getModuleName->getModuleName($modules_id);
@@ -20,6 +25,33 @@ if (isset($_POST['filter'])) {
   $getClassName = new Teacher();
   $class = $getClassName->getClassName($class_id);
 
+  $getAllGrades = new Students();
+  $grades = $getAllGrades->getAllGrades($year, $modules_id, $class_id, $semester_id);
+
+}else{
+
+  $year = $_SESSION['year'];
+  $modules_id = $_SESSION['modules_id'];
+  $class_id = $_SESSION['class_id'];
+  $semester_id = $_SESSION['semester_id'];
+
+  $getModuleName = new Teacher();
+  $module = $getModuleName->getModuleName($modules_id);
+
+  $getClassName = new Teacher();
+  $class = $getClassName->getClassName($class_id);
+
+  $getAllGrades = new Students();
+  $grades = $getAllGrades->getAllGrades($year, $modules_id, $class_id, $semester_id);
+}
+
+if (isset($_POST['edit_grade'])) {
+  $student_no = $_POST['student_no'];
+  $grade = $_POST['grade'];
+  $grade_id = $_POST['grade_id'];
+
+  $adminUpdateGrades = new Students();
+  $adminUpdateGrades->adminUpdateGrades($student_no, $grade, $grade_id);
 }
 
 ?>
@@ -69,22 +101,34 @@ if (isset($_POST['filter'])) {
         <div class="container-fluid">
 
           <!-- Page Heading -->
-          <h1 class="h3 mb-4 text-gray-800">Viewing <?php echo $class['name']; ?>'s <?php echo $module['name']; ?> Grades  </h1>
+          <h1 class="h3 mb-4 text-gray-800"><?php echo $_SESSION['year']; ?> <?php if($_SESSION['semester_id'] == 1){ echo "First Semester";  }else{ echo "Second Semester"; } ?> <?php echo $class['name']; ?> <?php echo $module['name']; ?> Grades  </h1>
           
 
         </div>
         <!-- /.container-fluid -->
 
 <div class="row container-fluid">
-  <div class="col-md-1"></div>
-  <div class="col-md-10">
+  <div class="col-md-12">
 
   <!-- Basic Card Example -->
     <div class="card shadow mb-4">
       <div class="card-body">
+
+      <?php
+      if(isset($_SESSION["grade_updated"]) && $_SESSION["grade_updated"]==true)
+            { ?>
+      <div class="alert alert-success" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <strong>Success! </strong> Grade updated Successfully
+      </div>  <?php
+      unset($_SESSION["grade_updated"]);
+      header('Refresh: 4; URL= view-grades.php');
+                }
+        ?>
+
         <div class="table-responsive">
         <?php
-        if(isset($students) && count($students)>0){
+        if(isset($grades) && count($grades)>0){
         $i = 0; 
           ?>
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -95,21 +139,25 @@ if (isset($_POST['filter'])) {
                       <th>Module</th>
                       <th>Class</th>
                       <th>Grade</th>
+                      <th>Year</th>
+                      <th>Semester</th>
                       <th>Date Recorded</th>
                     </tr>
                   </thead>
                   <tbody>
           <?php
-          foreach($students as $student){ 
+          foreach($grades as $grade){ 
           $i ++;
           ?>
                     <tr>
-                      <td><?php echo $student['student_no']; ?></td>
-                      <td><?php echo $student['name']; ?></td>
-                      <td><?php echo $module['name']; ?></td>
-                      <td><?php echo $student['class_name']; ?></td>
-                      <td><?php echo $student['grade']; ?></td>
-                      <td><?php $date = date_create($student['date_recorded']); echo date_format($date,"d, M Y"); ?></td>
+                      <td><?php echo $grade['student_no']; ?></td>
+                      <td><?php echo $grade['student_name']; ?></td>
+                      <td><?php echo $grade['module_name']; ?></td>
+                      <td><?php echo $grade['class_name']; ?></td>
+                      <td><?php echo $grade['grade']; ?></td>
+                      <td><?php echo $grade['year']; ?></td>
+                      <td><?php echo $grade['semester']; ?></td>
+                      <td><?php $date = date_create($grade['date_recorded']); echo date_format($date,"d, M Y"); ?></td>
                     </tr>
 
           <?php
@@ -131,7 +179,6 @@ if (isset($_POST['filter'])) {
     <!--End of Basic Card Example -->
 
   </div>
-  <div class="col-md-1"></div>
 </div>
 
       </div>

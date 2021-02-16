@@ -2,6 +2,7 @@
 ob_start();
 session_start();
 error_reporting(E_ALL);
+
 if(file_exists("connection.php")){
 	include_once ('connection.php');
 }else{
@@ -42,7 +43,273 @@ class Settings{
 		}
 	}//End of getting Current Settings
 
+	public function addModule($class_id, $module){
+		$addModule = $this->dbCon->prepare("INSERT INTO modules (name) 
+		VALUES (:name)" );
+		$addModule->execute(array(
+			':name'=>($module)
+			));
+		$modules_id = $this->dbCon->lastInsertId();
 
+		$addModuleToClass = $this->dbCon->prepare("INSERT INTO classes_has_modules (classes_id, modules_id) 
+		VALUES (:classes_id, :modules_id)" );
+		$addModuleToClass->execute(array(
+			':classes_id'=>($class_id),
+			':modules_id'=>($modules_id)
+			));
+
+		 $_SESSION['module_added']=true;
+		
+
+	} //end of Adding A Module
+
+  public function addClass($class){
+		$addClass = $this->dbCon->prepare("INSERT INTO classes (name) 
+		VALUES (:name)" );
+		$addClass->execute(array(
+				  ':name'=>($class)
+				  ));
+
+		$_SESSION['class_added']=true;
+		
+
+	} //end of Adding A Class
+
+	public function getClasses(){
+		$getClasses = $this->dbCon->PREPARE("SELECT id, name
+		 FROM classes");
+		//$getClasses->bindParam(1,$status);
+		$getClasses->execute();
+		
+		if($getClasses->rowCount()>0){
+			$rows = $getClasses->fetchAll();
+			
+			return $rows;
+		}
+	}//End of getting Classes
+
+
+	public function getModules(){
+		$getModules = $this->dbCon->PREPARE("SELECT id, name
+		 FROM modules");
+		//$getModules->bindParam(1,$status);
+		$getModules->execute();
+		
+		if($getModules->rowCount()>0){
+			$rows = $getModules->fetchAll();
+			
+			return $rows;
+		}
+	}//End of getting modules
+
+
+  public function addTimetableEntry($class_id, $modules_id, $time_from, $time_to, $timetable_date){
+		$addTimetableEntry = $this->dbCon->prepare("INSERT INTO timetable (time_from, time_to, timetable_date, modules_id, classes_id) 
+		VALUES (:time_from, :time_to, :timetable_date, :modules_id, :classes_id)" );
+		$addTimetableEntry->execute(array(
+				  ':time_from'=>($time_from),
+				  ':time_to'=>($time_to),
+				  ':timetable_date'=>($timetable_date),
+				  ':modules_id'=>($modules_id),
+				  ':classes_id'=>($class_id)
+				  ));
+
+		$_SESSION['entry_added']=true;
+		
+
+	} //end of Adding A timetable entry
+
+
+	public function getTimetableEntries(){
+		$getTimetableEntries = $this->dbCon->PREPARE("SELECT timetable.id as id, time_from, time_to, timetable_date, modules_id, classes_id, classes.name as class, modules.name as module FROM timetable INNER JOIN classes ON(timetable.classes_id=classes.id) INNER JOIN modules ON(timetable.modules_id=modules.id) ");
+		//$getTimetableEntries->bindParam(1,$status);
+		$getTimetableEntries->execute();
+		
+		if($getTimetableEntries->rowCount()>0){
+			$rows = $getTimetableEntries->fetchAll();
+			
+			return $rows;
+		}
+	}//End of getting timetable entries
+
+
+	public function getTimetableEntriesPerStudent($classes_id){
+		$getTimetableEntriesPerStudent = $this->dbCon->PREPARE("SELECT timetable.id as id, time_from, time_to, timetable_date, modules_id, classes_id, classes.name as class, modules.name as module FROM timetable INNER JOIN classes ON(timetable.classes_id=classes.id) INNER JOIN modules ON(timetable.modules_id=modules.id) WHERE timetable.classes_id=? ");
+		$getTimetableEntriesPerStudent->bindParam(1,$classes_id);
+		$getTimetableEntriesPerStudent->execute();
+		
+		if($getTimetableEntriesPerStudent->rowCount()>0){
+			$rows = $getTimetableEntriesPerStudent->fetchAll();
+			
+			return $rows;
+		}
+	}//End of getting timetable entries per student
+
+
+
+	public function editTimetableEntry($entry_id, $class_id, $modules_id, $time_from, $time_to, $timetable_date){
+		$editTimetableEntry = $this->dbCon->prepare("UPDATE timetable SET time_from=? , time_to=?, modules_id=?, classes_id=?, timetable_date=? WHERE id=?" );
+		$editTimetableEntry->bindParam(1,$time_from);
+		$editTimetableEntry->bindParam(2,$time_to);
+		$editTimetableEntry->bindParam(3,$modules_id);
+		$editTimetableEntry->bindParam(4,$class_id);
+		$editTimetableEntry->bindParam(5,$timetable_date);
+		$editTimetableEntry->bindParam(6,$entry_id);
+		$editTimetableEntry->execute();
+
+		$_SESSION['entry_updated']=true;
+
+
+	}//End of Updating a timetable entry
+
+
+	public function deleteTimetableEntry($class_id){
+		try{
+		$deleteTimetableEntry = $this->dbCon->PREPARE("DELETE FROM classes WHERE id=?");
+		$deleteTimetableEntry->bindParam(1,$class_id);
+		$deleteTimetableEntry->execute();
+
+		$_SESSION['entry_deleted']=true;
+
+		}catch(PDOException $e){
+			$_SESSION['failed'] = true;
+		}
+
+
+	}//End of Deleting a timetable entry
+
+
+  public function addExamCalendarEntry($class_id, $modules_id, $time_from, $time_to, $exam_date){
+		$addExamCalendarEntry = $this->dbCon->prepare("INSERT INTO exam_calendar (time_from, time_to, exam_date, modules_id, classes_id) 
+		VALUES (:time_from, :time_to, :exam_date, :modules_id, :classes_id)" );
+		$addExamCalendarEntry->execute(array(
+				  ':time_from'=>($time_from),
+				  ':time_to'=>($time_to),
+				  ':exam_date'=>($exam_date),
+				  ':modules_id'=>($modules_id),
+				  ':classes_id'=>($class_id)
+				  ));
+
+		$_SESSION['entry_added']=true;
+		
+
+	} //end of Adding an exam calendar entry
+
+
+	public function getExamCalendarEntries(){
+		$getExamCalendarEntries = $this->dbCon->PREPARE("SELECT exam_calendar.id as id, time_from, time_to, exam_date, modules_id, classes_id, classes.name as class, modules.name as module FROM exam_calendar INNER JOIN classes ON(exam_calendar.classes_id=classes.id) INNER JOIN modules ON(exam_calendar.modules_id=modules.id) ");
+		//$getExamCalendarEntries->bindParam(1,$status);
+		$getExamCalendarEntries->execute();
+		
+		if($getExamCalendarEntries->rowCount()>0){
+			$rows = $getExamCalendarEntries->fetchAll();
+			
+			return $rows;
+		}
+	}//End of getting exam calendar entries
+
+
+	public function getExamCalendarEntriesPerStudent($classes_id){
+		$getExamCalendarEntriesPerStudent = $this->dbCon->PREPARE("SELECT exam_calendar.id as id, time_from, time_to, exam_date, modules_id, classes_id, classes.name as class, modules.name as module FROM exam_calendar INNER JOIN classes ON(exam_calendar.classes_id=classes.id) INNER JOIN modules ON(exam_calendar.modules_id=modules.id) WHERE exam_calendar.classes_id=? ");
+		$getExamCalendarEntriesPerStudent->bindParam(1,$classes_id);
+		$getExamCalendarEntriesPerStudent->execute();
+		
+		if($getExamCalendarEntriesPerStudent->rowCount()>0){
+			$rows = $getExamCalendarEntriesPerStudent->fetchAll();
+			
+			return $rows;
+		}
+	}//End of getting exam calendar entries per student
+
+
+	public function getExamCalendarEntriesPerStudentDash($classes_id){
+		$getExamCalendarEntriesPerStudentDash = $this->dbCon->PREPARE("SELECT exam_calendar.id as id, time_from, time_to, exam_date, modules_id, classes_id, classes.name as class, modules.name as module FROM exam_calendar INNER JOIN classes ON(exam_calendar.classes_id=classes.id) INNER JOIN modules ON(exam_calendar.modules_id=modules.id) WHERE exam_calendar.classes_id=? ORDER BY exam_calendar.id ASC LIMIT 5 ");
+		$getExamCalendarEntriesPerStudentDash->bindParam(1,$classes_id);
+		$getExamCalendarEntriesPerStudentDash->execute();
+		
+		if($getExamCalendarEntriesPerStudentDash->rowCount()>0){
+			$rows = $getExamCalendarEntriesPerStudentDash->fetchAll();
+			
+			return $rows;
+		}
+	}//End of getting exam calendar entries per student
+
+
+	public function editExamCalendarEntry($entry_id, $class_id, $modules_id, $time_from, $time_to, $exam_date){
+		$editExamCalendarEntry = $this->dbCon->prepare("UPDATE exam_calendar SET time_from=? , time_to=?, modules_id=?, classes_id=?, exam_date=? WHERE id=?" );
+		$editExamCalendarEntry->bindParam(1,$time_from);
+		$editExamCalendarEntry->bindParam(2,$time_to);
+		$editExamCalendarEntry->bindParam(3,$modules_id);
+		$editExamCalendarEntry->bindParam(4,$class_id);
+		$editExamCalendarEntry->bindParam(5,$exam_date);
+		$editExamCalendarEntry->bindParam(6,$entry_id);
+		$editExamCalendarEntry->execute();
+
+		$_SESSION['entry_updated']=true;
+
+
+	}//End of Updating an exam calendar entry
+
+
+	public function deleteExamCalendarEntry($class_id){
+		try{
+		$deleteExamCalendarEntry = $this->dbCon->PREPARE("DELETE FROM exam_calendar WHERE id=?");
+		$deleteExamCalendarEntry->bindParam(1,$class_id);
+		$deleteExamCalendarEntry->execute();
+
+		$_SESSION['entry_deleted']=true;
+
+		}catch(PDOException $e){
+			$_SESSION['failed'] = true;
+		}
+
+
+	}//End of Deleting an exam calendar entry
+
+
+	public function deleteClass($class_id){
+		try{
+		$deleteClass = $this->dbCon->PREPARE("DELETE FROM classes WHERE id=?");
+		$deleteClass->bindParam(1,$class_id);
+		$deleteClass->execute();
+
+		$_SESSION['class_deleted']=true;
+
+		}catch(PDOException $e){
+			$_SESSION['class_has_students'] = true;
+		}
+
+
+	}//End of Deleting a Class
+
+	public function getModulesPerClass($modules_id){
+		$getModulesPerClass = $this->dbCon->PREPARE("SELECT modules.id as id, modules.name as name
+		 FROM classes_has_modules INNER JOIN classes ON(classes_has_modules.classes_id=classes.id) INNER JOIN modules ON(classes_has_modules.modules_id=modules.id) WHERE classes_has_modules.classes_id=?");
+		$getModulesPerClass->bindParam(1,$modules_id);
+		$getModulesPerClass->execute();
+		
+		if($getModulesPerClass->rowCount()>0){
+			$rows = $getModulesPerClass->fetchAll();
+			
+			return $rows;
+		}
+	}//End of getting Modules
+
+
+	public function deleteModule($class_id, $module_id){
+		$deleteModule = $this->dbCon->PREPARE("DELETE FROM classes_has_modules WHERE classes_id=? AND modules_id=?");
+		$deleteModule->bindParam(1,$class_id);
+		$deleteModule->bindParam(2,$module_id);
+		$deleteModule->execute();
+
+		$deleteSpecificModule = $this->dbCon->PREPARE("DELETE FROM modules WHERE id=?");
+		$deleteSpecificModule->bindParam(1,$module_id);
+		$deleteSpecificModule->execute();
+
+		$_SESSION['module_deleted']=true;
+
+
+	}//End of Deleting Modules
 
 	public function getSemesters(){
 		$getSemesters = $this->dbCon->PREPARE("SELECT id, name
@@ -154,6 +421,26 @@ class User{
 		}
 	} //end of login authentication
 
+
+	public function checkPassword(){	
+				$checkPassword = $this->dbCon->prepare("SELECT first_login FROM users WHERE username=?" );
+				$checkPassword->bindParam(1, $_SESSION['user']['username']);
+				$checkPassword->execute();
+
+				if($checkPassword->rowCount() == 1){
+				$row = $checkPassword -> fetch();
+
+				$first_login = trim($row['first_login']);
+
+				if ($first_login == 0) {
+					header("location: change-password.php");
+				}
+				
+				
+
+			}
+		
+	}//End of check Password
 
 	
 	public function getUserProfile(){	
@@ -312,6 +599,25 @@ class User{
 	} //end of Counting all Students
 
 
+	public function countAllTeachers(){
+		//get all teachers
+		try{
+			$countAllTeachers = $this->dbCon->prepare("SELECT count(id) as teacher FROM teachers");
+			$countAllTeachers->execute();
+			if($countAllTeachers->rowCount()>0){
+				$row = $countAllTeachers->fetch();
+				return $row;
+			}else{
+				return null;
+			}
+		}catch(PDOException $e){
+			echo $e->getMessage();
+		}
+
+
+	} //end of Counting all teachers
+
+
 		public function getAllUsers(){
 		//get all users
 		try{
@@ -371,19 +677,38 @@ class User{
 
 	} //end of getting single user
 
-	//Update Password
-	public function updatePassword($username, $password){
+	public function changePassword($username, $password){
 
 		try{
-			$updatepassword = $this->dbCon->prepare("UPDATE users SET password =? WHERE username=?");
-			$updatepassword->bindparam(1, $password);
-			$updatepassword->bindparam(2, $username);
-			$updatepassword->execute();
+			$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+			$changePassword = $this->dbCon->prepare("UPDATE users SET password =? WHERE username=?");
+			$changePassword->bindparam(1, $hashed_password);
+			$changePassword->bindparam(2, $username);
+			$changePassword->execute();
 
 			$_SESSION['password_updated'] =true;
 		}catch(PDOException $e){
 			echo $e->getMessage();
 		}
+	}//End of updating a users password
+
+	//Update Password
+	public function updatePassword($new_password){
+		$password = password_hash($new_password, PASSWORD_DEFAULT)."\n";
+		$first_login = 1;
+		$updatePassword =$this->dbCon->PREPARE("UPDATE users SET password =? WHERE username=? ");
+		$updatePassword->bindParam(1,$password);
+		$updatePassword->bindParam(2,$_SESSION['user']['username']);
+		$updatePassword->execute();
+
+		$updateFirstLogin =$this->dbCon->PREPARE("UPDATE users SET first_login =? WHERE username=? ");
+		$updateFirstLogin->bindParam(1,$first_login);
+		$updateFirstLogin->bindParam(2,$_SESSION['user']['username']);
+		$updateFirstLogin->execute();
+
+
+		$_SESSION['password_updated']= true;
+				
 	}//End of Updating password
 
 
@@ -517,6 +842,19 @@ class Students{
 	} //end of getting Students
 
 
+	public function getSpecificStudent($student_no){
+		$getSpecificStudent = $this->dbCon->Prepare("SELECT student_no, phone, nationality, dob, gender, date_added, classes.name as class_name, email, status, CONCAT(firstname,' ',lastname) as name
+		FROM students INNER JOIN classes ON(students.classes_id=classes.id) WHERE student_no=? ORDER BY date_added DESC");
+		$getSpecificStudent->bindparam(1, $student_no);
+		$getSpecificStudent->execute();
+		
+		if($getSpecificStudent->rowCount()>0){
+			$row = $getSpecificStudent->fetch();
+			return $row;
+		}
+	} //end of getting specific Student
+
+
 	public function deleteStudent($id){
 
 		$deleteStudent =$this->dbCon->PREPARE("DELETE FROM students WHERE student_no=?");
@@ -544,6 +882,42 @@ class Students{
 
 			}	
 	}//End og getting Student Class
+
+	public function getSpecificStudentClass($id){	
+				$getStudentClass = $this->dbCon->prepare("SELECT classes_id, name, CONCAT(firstname, ' ', lastname) as student_name FROM students INNER JOIN classes ON(students.classes_id=classes.id) WHERE student_no=?" );
+				$getStudentClass->bindParam(1, $id);
+				$getStudentClass->execute();
+
+				if($getStudentClass->rowCount()>0){
+				$row = $getStudentClass -> fetch();
+
+				return $row;
+
+
+			}	
+	}//End og getting Specific Student Class
+
+
+	public function adminUpdateGrades($student_no, $grade, $grade_id){
+		$adminUpdateGrades = $this->dbCon->PREPARE("UPDATE grades SET grade =? WHERE students_student_no=? AND id=? ");
+		$adminUpdateGrades->bindParam(1,$grade);
+		$adminUpdateGrades->bindParam(2,$student_no);
+		$adminUpdateGrades->bindParam(3,$grade_id);
+		$adminUpdateGrades->execute();
+
+		$_SESSION['grade_updated'] = true;
+	}
+
+
+
+	public function updateStudentClass($class_id, $student_no){
+		$updateStudentClass = $this->dbCon->PREPARE("UPDATE students SET classes_id =? WHERE student_no=?");
+		$updateStudentClass->bindParam(1,$class_id);
+		$updateStudentClass->bindParam(2,$student_no);
+		$updateStudentClass->execute();
+
+		$_SESSION['class_updated'] = true;
+	}
 
 
 
@@ -573,6 +947,7 @@ class Students{
 			$_SESSION['balance_found'] = true;
 		} else{
 
+		$_SESSION['no_balance'] = true;
 		$getAllStudentsGrades = $this->dbCon->Prepare("SELECT students.student_no as student_no, grade, date_recorded, classes.name as class_name, modules.name as module_name
 		FROM grades INNER JOIN students ON(grades.students_student_no=students.student_no) INNER JOIN classes ON(students.classes_id=classes.id) INNER JOIN modules ON(grades.modules_id=modules.id) WHERE grades.classes_id=? AND grades.year=? AND grades.semester_id =? AND grades.students_student_no =? ORDER BY date_added DESC");
 		$getAllStudentsGrades->bindParam(1, $classes_id);
@@ -591,6 +966,23 @@ class Students{
 	} //end of getting All Students Grades
 
 
+	public function getAllGrades($year, $modules_id, $class_id, $semester_id){
+		$status = 1;
+		$_SESSION['no_balance'] = true;
+		$getAllGrades = $this->dbCon->Prepare("SELECT grades.id as id, CONCAT(students.firstname,' ',students.lastname) as student_name, year, IF(semester_id = 1,'First Semester', 'Second Semester') as semester, students.student_no as student_no, grade, date_recorded, classes.name as class_name, modules.name as module_name
+		FROM grades INNER JOIN students ON(grades.students_student_no=students.student_no) INNER JOIN classes ON(students.classes_id=classes.id) INNER JOIN modules ON(grades.modules_id=modules.id) WHERE grades.classes_id=? AND grades.year=? AND grades.semester_id =? AND grades.modules_id =? ORDER BY date_recorded DESC");
+		$getAllGrades->bindParam(1, $class_id);
+		$getAllGrades->bindParam(2, $year);
+		$getAllGrades->bindParam(3, $semester_id);
+		$getAllGrades->bindParam(4, $modules_id);
+
+		$getAllGrades->execute();
+		
+		if($getAllGrades->rowCount()>0){
+			$rows = $getAllGrades->fetchAll();
+			return $rows;
+		}
+	} //end of getting All Students Grades
 
 	public function getFeesBalancePerStudent(){
 		$status = 1;
@@ -1154,8 +1546,8 @@ class Accountant{
 
 	public function getStudentsBalances(){
 		$status = 1; //Fees balance not resolved
-		$getStudentsBalances = $this->dbCon->Prepare("SELECT students_student_no, balance, remarks, date_recorded, CONCAT(students.firstname,' ',students.lastname) as name
-		FROM fees_balances INNER JOIN students ON(fees_balances.students_student_no=students.student_no) WHERE fees_balances.status =? ORDER BY date_recorded DESC");
+		$getStudentsBalances = $this->dbCon->Prepare("SELECT fees_balances.id as id, students_student_no, balance, remarks, date_recorded, CONCAT(students.firstname,' ',students.lastname) as name, classes.name as class
+		FROM fees_balances INNER JOIN students ON(fees_balances.students_student_no=students.student_no) INNER JOIN classes ON(students.classes_id=classes.id) WHERE fees_balances.status =? ORDER BY date_recorded DESC");
 		$getStudentsBalances->bindParam(1,$status);
 		$getStudentsBalances->execute();
 		
@@ -1191,6 +1583,16 @@ class Accountant{
 		$_SESSION['fees_resolved'] = true;
 		
 	} //End of Resolving Fees Balance
+
+
+	public function addBalanceInstallment($amount, $fees_id){
+		$addBalanceInstallment = $this->dbCon->Prepare("UPDATE fees_balances SET balance = balance - $amount WHERE id =? ");
+		$addBalanceInstallment->bindParam(1, $fees_id);
+		$addBalanceInstallment->execute();
+
+		$_SESSION['imstallment_added'] = true;
+		
+	} //End of adding installment to Fees Balance
 
 
 } //End of class Accountant
@@ -1314,11 +1716,12 @@ class Teacher{
 	} //End of Adding Material
 
 
-	public function getMaterialsPerClassModule($classes_id, $modules_id){
-		$getMaterialsPerClassModule = $this->dbCon->Prepare("SELECT title, material, modules.name as module_name, classes.name as class_name, year, semester_id, date_added FROM materials INNER JOIN modules ON(materials.modules_id=modules.id) INNER JOIN classes ON(materials.classes_id=classes.id) WHERE classes_id=? AND modules_id=? ORDER BY date_added DESC");
+	public function getMaterialsPerClassModule($classes_id, $modules_id, $year, $semester_id){
+		$getMaterialsPerClassModule = $this->dbCon->Prepare("SELECT title, material, modules.name as module_name, classes.name as class_name, year, semester_id, date_added FROM materials INNER JOIN modules ON(materials.modules_id=modules.id) INNER JOIN classes ON(materials.classes_id=classes.id) WHERE classes_id=? AND modules_id=? AND materials.year=? AND materials.semester_id=? ORDER BY date_added DESC");
 		$getMaterialsPerClassModule->bindParam(1, $classes_id);
 		$getMaterialsPerClassModule->bindParam(2, $modules_id);
-
+		$getMaterialsPerClassModule->bindParam(3, $year);
+		$getMaterialsPerClassModule->bindParam(4, $semester_id);
 		$getMaterialsPerClassModule->execute();
 		
 		if($getMaterialsPerClassModule->rowCount()>0){

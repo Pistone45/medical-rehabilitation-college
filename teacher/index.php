@@ -1,8 +1,15 @@
 <?php
 include_once '../functions/functions.php';
+if(!isset($_SESSION['user'])){
+    header("Location: ../login.php");
+    exit;
+}
+
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
 
+$checkPassword = new User();
+$checkPassword-> checkPassword();
 
 ?>
 <!DOCTYPE html>

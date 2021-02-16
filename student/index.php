@@ -7,6 +7,9 @@ if(!isset($_SESSION['user'])){
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
 
+$checkPassword = new User();
+$checkPassword-> checkPassword();
+
 $countAllUnreadNotifications = new Students();
 $count = $countAllUnreadNotifications-> countAllUnreadNotifications();
 
@@ -15,8 +18,8 @@ $count_unread = $countAllUnreadMessages-> countAllUnreadMessages();
 
 $getFeesBalancePerStudent = new Students();
 $feesBalance = $getFeesBalancePerStudent-> getFeesBalancePerStudent();
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 

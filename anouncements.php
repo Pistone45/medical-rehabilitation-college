@@ -27,7 +27,7 @@ $announcements = $getAnnouncements->getAnnouncements();
     <section style="padding-top: 18px;" id="services" class="services">
       <div class="container">
         <div class="section-title">
-          <h2>new announcements <button class="btn btn-outline-success"><a href=""><i class="fas fa-download"></i> Download PDF</button></a></h2>
+          <h2>all announcements <button class="btn btn-outline-success"><a href="download-announcements.php"><i class="fas fa-download"></i> Download PDF</button></a></h2>
         </div>
 
         <div class="row">
@@ -57,14 +57,13 @@ $announcements = $getAnnouncements->getAnnouncements();
                     </button>
                   </div>
                   <div class="modal-body">
-                    <div class="card shadow">
-                      <div class="card-header">
-                        <h6 class="m-0 font-weight-bold text-primary"><?php echo $announcement['title']; ?></h6>
-                      </div>
-                      <div class="card-body">
-                        <?php echo $announcement['description']; ?>
+                    <h5><?php echo $announcement['title']; ?></h5>
+                    <div class="card border-dark mb-3">
+                      <div class="card-body text-dark">
+                        <p class="card-text"><?php echo $announcement['description']; ?></p>
                       </div>
                     </div>
+
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

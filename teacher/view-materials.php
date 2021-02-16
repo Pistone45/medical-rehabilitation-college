@@ -11,9 +11,11 @@ $user_details = $getUserProfile-> getUserProfile();
 if (isset($_POST['filter'])) {
   $classes_id = $_POST['classes_id'];
   $modules_id = $_POST['modules_id'];
+  $year = $_POST['year'];
+  $semester_id = $_POST['semester_id'];
 
   $getMaterialsPerClassModule = new Teacher();
-  $materials = $getMaterialsPerClassModule->getMaterialsPerClassModule($classes_id, $modules_id);
+  $materials = $getMaterialsPerClassModule->getMaterialsPerClassModule($classes_id, $modules_id, $year, $semester_id);
 
   $getModuleName = new Teacher();
   $module = $getModuleName->getModuleName($modules_id);

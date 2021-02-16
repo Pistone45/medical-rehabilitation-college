@@ -27,6 +27,24 @@ if (isset($_POST['send_message'])) {
   $sendMessage = $sendMessage->sendMessage($subject, $message, $student_no);
 }
 
+
+$getClasses = new Settings();
+$classes = $getClasses->getClasses();
+
+$getUserProfile = new User();
+$user_details = $getUserProfile-> getUserProfile();
+
+$getClasses = new Settings();
+$all_classes = $getClasses->getClasses();
+
+if (isset($_POST['change_class'])) {
+$class_id = $_POST['class_id'];
+$student_no = $_POST['student_no'];
+
+$updateStudentClass = new Students();
+$updateStudentClass = $updateStudentClass->updateStudentClass($class_id, $student_no);
+
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -87,6 +105,18 @@ if (isset($_POST['send_message'])) {
     <div class="card shadow mb-4">
       <div class="card-body">
           <?php
+          if(isset($_SESSION["class_updated"]) && $_SESSION["class_updated"]==true)
+                { ?>
+          <div class="alert alert-success" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <strong>Success! </strong>Student Class Changed Successfully
+          </div>  <?php
+          unset($_SESSION["class_updated"]);
+          header('Refresh: 4; URL= view-students.php');
+                    }
+            ?>
+
+          <?php
             if(isset($_SESSION["student-deleted"]) && $_SESSION["student-deleted"]==true)
                   { ?>
             <div class="alert alert-success" role="alert">
@@ -121,7 +151,7 @@ if (isset($_POST['send_message'])) {
                       <th>Gender</th>
                       <th>Class Name</th>
                       <th>Email</th>
-                      <th>Date Added</th>
+                      <th>Change Class</th>
                       <th>Action</th>
                       <th>Message</th>
                     </tr>
@@ -129,23 +159,70 @@ if (isset($_POST['send_message'])) {
                   <tbody>
           <?php
           $i = 0;
+          $modal = 0;
           foreach($students as $student){
-          $i++; 
+          $i++;
+          $modal++; 
           ?>
                     <tr>
                       <td><?php echo $student['name']; ?></td>
-                      <td><?php echo $student['dob']; ?></td>
+                      <td><?php $date = date_create($student['dob']); echo date_format($date,"d, M Y"); ?></td>
                       <td><?php echo $student['gender']; ?></td>
                       <td><?php echo $student['class_name']; ?></td>
                       <td><?php echo $student['email']; ?></td>
-                      <td><?php $date = date_create($student['date_added']); echo date_format($date,"d, M Y"); ?></td>
-                      <td><i class="fas fa-trash text-gray-800"></i> <a href="#">Delete</a></td>
-                      <td><!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#contact<?php echo $i; ?>modal">
-<i style="font-size: 25px;" class="far fa-envelope-open"></i>
-</button></td>
+                      <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#change<?php echo $modal; ?>class">
+                        <i style="font-size: 25px;" class="fab fa-buffer"></i>
+                      </button></td>
+                      <td>
 
-<!-- Modal -->
+    <!-- Button for Message modal -->
+<button type="button" title="Send Message" class="btn btn-primary" data-toggle="modal" data-target="#contact<?php echo $i; ?>modal">
+<i style="font-size: 25px;" class="far fa-envelope-open"></i>
+</button>
+
+</div>
+</td>
+<td><i class="fas fa-trash text-gray-800"></i> <a href="#">Delete</a></td>
+
+<!-- Change class Modal -->
+<div class="modal fade" id="change<?php echo $modal; ?>class" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Change <?php echo $student['name']; ?>'s Class</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <p style="color: blue;">Choose new Class Below:</p>
+
+        <form action="view-students.php" method="POST">
+        <input type="hidden" name="student_no" value="<?php echo $student['student_no']; ?>">
+        <select name="class_id" class="custom-select">
+            <?php
+            if(isset($all_classes) && count($all_classes)>0){
+              foreach($all_classes as $classes){ ?>
+                  <option value="<?php echo $classes['id']; ?>"><?php echo $classes['name']; ?></option>
+                  <?php 
+                }
+              }
+            ?>
+
+        </select>
+        <br><br>
+        <button type="submit" name="change_class" class="btn btn-primary"><i class="fas fa-edit"></i> Change Class</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Message Modal -->
 <div class="modal fade" id="contact<?php echo $i; ?>modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">

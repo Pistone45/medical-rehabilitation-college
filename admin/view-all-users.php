@@ -25,6 +25,15 @@ $disableUser = $disableUser->disableUser($id);
 
 }
 
+if (isset($_POST['change_password'])) {
+  $username = $_POST['username'];
+  $password = $_POST['password'];
+
+  $changePassword = new User();
+  $changePassword = $changePassword->changePassword($username, $password);  
+
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -95,6 +104,20 @@ $disableUser = $disableUser->disableUser($id);
             header('Refresh: 4; URL= view-all-users.php');
                       }
               ?>
+
+          <?php
+            if(isset($_SESSION["password_updated"]) && $_SESSION["password_updated"]==true)
+                  { ?>
+            <div class="alert alert-success" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <strong>Success! </strong> You have successfully Changed a Users Password
+            </div>  <?php
+            unset($_SESSION["password_updated"]);
+            header('Refresh: 4; URL= view-all-users.php');
+                      }
+              ?>
+
+
           <?php
             if(isset($_SESSION["user_disabled"]) && $_SESSION["user_disabled"]==true)
                   { ?>
@@ -109,16 +132,17 @@ $disableUser = $disableUser->disableUser($id);
               <div class="table-responsive">
         <?php
         if(isset($users) && count($users)>0){ 
+          $modal = 0;
           ?>
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
                     <tr>
                       <th>Username</th>
                       <th>First Name</th>
-                      <th>Middle Name</th>
                       <th>Last Name</th>
                       <th>Date Added</th>
                       <th>Role</th>
+                      <th>Action</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -126,20 +150,51 @@ $disableUser = $disableUser->disableUser($id);
           <?php
 
           foreach($users as $user){ 
+            $modal++;
           ?>
                     <tr>
                       <td><?php echo $user['username']; ?></td>
                       <td><?php echo $user['firstname']; ?></td>
-                      <td><?php echo $user['middlename']; ?></td>
                       <td><?php echo $user['lastname']; ?></td>
                       <td><?php $date = date_create($user['date_added']); echo date_format($date,"d, M Y"); ?></td>
                       <td><?php echo $user['role_name']; ?></td>
+                      <td><button data-toggle="modal" data-target="#passwordModal<?php echo $modal; ?>" class="btn btn-primary">Change Password</button></td>
                       <td><?php if($user['status'] == 1){  ?><div class="custom-control custom-switch">
   <input type="checkbox" checked="" class="custom-control-input" id="customSwitch1">
   <label class="custom-control-label" for="customSwitch1"><a href="view-all-users.php?disable_id=<?php echo $user['username']; ?>">Disable</a><?php  }else{  ?><div class="custom-control custom-switch">
   <input type="checkbox" class="custom-control-input" id="customSwitch1">
   <label class="custom-control-label" for="customSwitch1"><a href="view-all-users.php?enable_id=<?php echo $user['username']; ?>">Enable</a></label></div><?php } ?></td>
                     </tr>
+
+<!-- Modal -->
+<div class="modal fade" id="passwordModal<?php echo $modal; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Change <?php echo $user['firstname'].' '.$user['lastname']; ?>'s Password</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <form action="view-all-users.php" method="POST">
+      <input type="hidden" name="username" value="<?php echo $user['username']; ?>">
+      <div class="form-group">
+        <label for="exampleInputPassword1">Password</label>
+        <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="New Password">
+      </div>
+
+      <button class="btn btn-primary" type="submit" name="change_password">Change Password</button>
+
+      </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
           <?php
             
           } ?>
@@ -148,7 +203,7 @@ $disableUser = $disableUser->disableUser($id);
                 </table>
                 <?php
                       }else {
-                        echo "No Teachers Available";
+                        echo "No Users Available";
                       }
         ?>
               </div>
@@ -159,6 +214,6 @@ $disableUser = $disableUser->disableUser($id);
   </div>
 </div>
 
-      </div>
-      <!-- End of Main Content -->
+</div>
+<!-- End of Main Content -->
 <?php include 'footer.php';  ?>
