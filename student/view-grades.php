@@ -75,7 +75,7 @@ if (isset($_SESSION['year'])) {
         <!-- /.container-fluid -->
 
 <div class="row container-fluid">
-  <div class="col-md-8">
+  <div class="col-md-9">
 
   <!-- Basic Card Example -->
     <div class="card shadow mb-4">
@@ -102,6 +102,7 @@ if (isset($_SESSION['year'])) {
                       <th>Class Name</th>
                       <th>Module</th>
                       <th>Grade</th>
+                      <th>Comment</th>
                       <th>Date Recorded</th>
                     </tr>
                   </thead>
@@ -113,7 +114,10 @@ if (isset($_SESSION['year'])) {
                     <tr>
                       <td><?php echo $grade['class_name']; ?></td>
                       <td><?php echo $grade['module_name']; ?></td>
-                      <td><?php echo $grade['grade']; ?></td>
+                      <td><?php echo $grade['grade'];
+                      if($grade['grade'] > 0 && $grade['grade'] < 40 ){ ?> <b style="color: red">(Fail)</b> <?php 
+                    }else{ ?> <b style="color: green">(Pass)</b> <?php } ?></td>
+                      <td><?php echo $grade['comments']; ?>
                       <td><?php $date = date_create($grade['date_recorded']); echo date_format($date,"d, M Y"); ?></td>
                     </tr>
 
@@ -141,7 +145,7 @@ if (isset($_SESSION['year'])) {
     <!--End of Basic Card Example -->
 
   </div>
-  <div class="col-md-4">
+  <div class="col-md-3">
     <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="../images/undraw_detailed_analysis_xn7y.svg" alt="">
   </div>
 </div>

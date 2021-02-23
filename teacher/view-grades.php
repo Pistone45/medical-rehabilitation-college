@@ -106,6 +106,7 @@ if (isset($_POST['edit_grade'])) {
 
         </div>
         <!-- /.container-fluid -->
+        <p style="padding-left: 30px;"><i>Click a grade to see comments</i></p>
 
 <div class="row container-fluid">
   <div class="col-md-12">
@@ -154,11 +155,41 @@ if (isset($_POST['edit_grade'])) {
                       <td><?php echo $grade['student_name']; ?></td>
                       <td><?php echo $grade['module_name']; ?></td>
                       <td><?php echo $grade['class_name']; ?></td>
-                      <td><?php echo $grade['grade']; ?></td>
+                      <td><b data-toggle="modal" data-target="#commentModal<?php echo $i; ?>" id="cursor"><?php echo $grade['grade'];
+                      if($grade['grade'] > 0 && $grade['grade'] < 40 ){ ?> <b style="color: red">(Fail)</b> <?php 
+                    }else{ ?> <b style="color: green">(Pass)</b> <?php } ?>
+                    </td></b>
                       <td><?php echo $grade['year']; ?></td>
                       <td><?php echo $grade['semester']; ?></td>
                       <td><?php $date = date_create($grade['date_recorded']); echo date_format($date,"d, M Y"); ?></td>
                     </tr>
+
+<!-- Modal -->
+<div class="modal fade" id="commentModal<?php echo $i; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><?php echo $grade['student_name']; ?>'s Comment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      
+      <div class="card border-<?php if($grade['grade'] > 0 && $grade['grade'] < 40 ){ echo "danger"; }else{ echo "success"; } ?> mb-3">
+        <div class="card-body text-dark">
+          <?php echo $grade['comments']; ?>
+          <?php if($grade['grade'] > 0 && $grade['grade'] < 40 ){ echo "danger"; }else{ echo "success"; } ?>
+        </div>
+      </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>                    
 
           <?php
             
@@ -177,7 +208,12 @@ if (isset($_POST['edit_grade'])) {
       </div>
     </div>
     <!--End of Basic Card Example -->
-
+    <style>
+        #cursor{
+            cursor: pointer;
+      margin: 15px 0;
+        }
+    </style>
   </div>
 </div>
 

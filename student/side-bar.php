@@ -39,7 +39,7 @@
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsegrades" aria-expanded="true" aria-controls="collapsegrades">
           <i class="fas fa-graduation-cap"></i>
-          <span>Grages</span>
+          <span>Grades</span>
         </a>
         <div id="collapsegrades" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">

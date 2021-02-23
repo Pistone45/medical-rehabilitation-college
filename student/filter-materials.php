@@ -8,6 +8,17 @@ if(!isset($_SESSION['user'])){
 $getUserProfile = new User();
 $user_details = $getUserProfile-> getUserProfile();
 
+$getSemesters = new Settings();
+$semesters = $getSemesters->getSemesters();
+
+$getCurrentSettings = new Settings();
+$settings = $getCurrentSettings->getCurrentSettings();
+
+$year =(int)$settings['year'];
+//from academic_year get the last 10 years
+$ten_years = $year-10;
+$years =range($year,$ten_years,-1);
+
 $getStudentClass = new Students();
 $class = $getStudentClass-> getStudentClass();
 $classes_id = $class['classes_id'];
@@ -74,21 +85,47 @@ $modules = $getAllModulesPerStudent-> getAllModulesPerStudent($classes_id);
     <div class="card shadow mb-4">
       <div class="card-body">
 
-      <form action="view-materials.php" method="POST">
+<form action="view-materials.php" method="POST">
+
       <label>Select Module</label>
-            <select class="custom-select" name="modules_id" required="">
-            <?php
-              if(isset($modules) && count($modules)>0){
-                foreach($modules as $module){ ?>
-                  <option value="<?php echo $module['modules_id']; ?>"><?php echo $module['module_name']; ?></option>
-                <?php
-                  
-                }
+        <select required="" name="modules_id" class="form-control">
+           <?php
+            if(isset($modules) && count($modules)>0){
+              foreach($modules as $module){ ?>
+                <option value="<?php echo $module['modules_id']; ?>"><?php echo $module['module_name']; ?></option>
+              <?php
+                
               }
-            ?>
-            </select>
+            }
+          ?>
+        </select>
+<br>
+      <label>Select Year</label>
+        <select required="" name="year" class="form-control">
+           <?php
+            if(isset($years) && count($years)>0){
+              foreach($years as $year){ ?>
+                <option value="<?php echo $year; ?>"><?php echo $year; ?></option>
+              <?php
+                
+              }
+            }
+          ?>
+        </select>
+      <br>
+      <label>Select Semester</label>
+        <select required="" name="semester_id" class="form-control">
+           <?php
+            if(isset($semesters) && count($semesters)>0){
+              foreach($semesters as $semester){ ?>
+                <option value="<?php echo $semester['id']; ?>"><?php echo $semester['name']; ?></option>
+              <?php
+                
+              }
+            }
+          ?>
+        </select>
       <br><br>
-      <input hidden="" type="text" name="classes_id" value="<?php echo $classes_id; ?>">
       <button type="submit" name="filter" class="btn btn-outline-success">Continue <i style="font-size: 18px;" class="fas fa-arrow-circle-right"></i></button>
       </form>
 

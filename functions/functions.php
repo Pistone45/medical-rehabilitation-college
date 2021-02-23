@@ -948,7 +948,7 @@ class Students{
 		} else{
 
 		$_SESSION['no_balance'] = true;
-		$getAllStudentsGrades = $this->dbCon->Prepare("SELECT students.student_no as student_no, grade, date_recorded, classes.name as class_name, modules.name as module_name
+		$getAllStudentsGrades = $this->dbCon->Prepare("SELECT students.student_no as student_no, grade, comments, date_recorded, classes.name as class_name, modules.name as module_name
 		FROM grades INNER JOIN students ON(grades.students_student_no=students.student_no) INNER JOIN classes ON(students.classes_id=classes.id) INNER JOIN modules ON(grades.modules_id=modules.id) WHERE grades.classes_id=? AND grades.year=? AND grades.semester_id =? AND grades.students_student_no =? ORDER BY date_added DESC");
 		$getAllStudentsGrades->bindParam(1, $classes_id);
 		$getAllStudentsGrades->bindParam(2, $year);
@@ -969,7 +969,7 @@ class Students{
 	public function getAllGrades($year, $modules_id, $class_id, $semester_id){
 		$status = 1;
 		$_SESSION['no_balance'] = true;
-		$getAllGrades = $this->dbCon->Prepare("SELECT grades.id as id, CONCAT(students.firstname,' ',students.lastname) as student_name, year, IF(semester_id = 1,'First Semester', 'Second Semester') as semester, students.student_no as student_no, grade, date_recorded, classes.name as class_name, modules.name as module_name
+		$getAllGrades = $this->dbCon->Prepare("SELECT grades.id as id, comments, CONCAT(students.firstname,' ',students.lastname) as student_name, year, IF(semester_id = 1,'First Semester', 'Second Semester') as semester, students.student_no as student_no, grade, date_recorded, classes.name as class_name, modules.name as module_name
 		FROM grades INNER JOIN students ON(grades.students_student_no=students.student_no) INNER JOIN classes ON(students.classes_id=classes.id) INNER JOIN modules ON(grades.modules_id=modules.id) WHERE grades.classes_id=? AND grades.year=? AND grades.semester_id =? AND grades.modules_id =? ORDER BY date_recorded DESC");
 		$getAllGrades->bindParam(1, $class_id);
 		$getAllGrades->bindParam(2, $year);
@@ -1633,7 +1633,7 @@ class Teacher{
 
 
 
-  public function recordGrade($grade, $student_no, $class_id, $year, $semester_id, $modules_id){
+  public function recordGrade($grade, $student_no, $class_id, $year, $semester_id, $modules_id, $comment){
   	$date = DATE("Y-m-d h:i");
   		$checkGrades = $this->dbCon->PREPARE("SELECT modules_id, classes_id, year,semester_id
 		FROM grades 
@@ -1650,24 +1650,30 @@ class Teacher{
 		}else{
 
   				if(count($grade)>0){
-				foreach(array_combine($student_no, $grade) as $student => $grades){	
 
-				$recordGrade = $this->dbCon->prepare("INSERT INTO grades (students_student_no, classes_id, grade, year, semester_id, date_recorded, modules_id) 
-				VALUES (:students_student_no, :classes_id, :grade, :year, :semester_id, :date_recorded, :modules_id)" );
-				$recordGrade->execute(array(
-						  ':students_student_no'=>($student),
-						  ':classes_id'=>($class_id),
-						  ':grade'=>($grades),
-						  ':year'=>($year),
-						  ':semester_id'=>($semester_id),
-						  ':date_recorded'=>($date),
-						  ':modules_id'=>($modules_id)
-						  ));
+				$iterator = new MultipleIterator();
+				$iterator->attachIterator(new ArrayIterator($student_no));
+				$iterator->attachIterator(new ArrayIterator($grade));
+				$iterator->attachIterator(new ArrayIterator($comment));
+				foreach ($iterator as $current) {
+				    $student = $current[0];
+				    $grades  = $current[1];
+				    $comments  = $current[2];
 
+					$recordGrade = $this->dbCon->prepare("INSERT INTO grades (students_student_no, classes_id, grade, year, semester_id, date_recorded, modules_id, comments) 
+					VALUES (:students_student_no, :classes_id, :grade, :year, :semester_id, :date_recorded, :modules_id, :comments)" );
+					$recordGrade->execute(array(
+							  ':students_student_no'=>($student),
+							  ':classes_id'=>($class_id),
+							  ':grade'=>($grades),
+							  ':year'=>($year),
+							  ':semester_id'=>($semester_id),
+							  ':date_recorded'=>($date),
+							  ':modules_id'=>($modules_id),
+							  ':comments'=>($comments)
+							  ));
 
-
-		  $_SESSION['grade_recorded']=true;
-					
+				   $_SESSION['grade_recorded']=true;
 				}
 				
 			}

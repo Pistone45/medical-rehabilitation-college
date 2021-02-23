@@ -23,6 +23,7 @@ if (isset($_POST['filter'])) {
 
 if (isset($_POST['record'])) {
 $grade = $_POST['grade'];
+$comment = $_POST['comment'];
 $student_no = $_POST['student_no'];
 $class_id = $_POST['class_id'];
 $modules_id = $_POST['modules_id'];
@@ -31,7 +32,7 @@ $semester_id = $_SESSION['semester_id'];
 $modules_id = $_POST['modules_id'];
 
 $recordGrade = new Teacher();
-$recordGrade = $recordGrade->recordGrade($grade, $student_no, $class_id, $year, $semester_id, $modules_id);
+$recordGrade = $recordGrade->recordGrade($grade, $student_no, $class_id, $year, $semester_id, $modules_id, $comment);
 
 }
 
@@ -130,6 +131,7 @@ $recordGrade = $recordGrade->recordGrade($grade, $student_no, $class_id, $year, 
                       <th>Module</th>
                       <th>Class</th>
                       <th>Grade</th>
+                      <th>Comment</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -148,6 +150,11 @@ $recordGrade = $recordGrade->recordGrade($grade, $student_no, $class_id, $year, 
                 <input type="number" min="0" max="100" name="grade[]"  class="form-control" id="formGroupExampleInput" placeholder="Enter Grade" required="">
               </div>
               <input type="text" hidden="" name="student_no[]" class="form-control" value="<?php echo $student['student_no']; ?>">
+                      </td>
+                      <td>
+                      <div class="form-group">
+                        <textarea class="form-control" name="comment[]" id="exampleFormControlTextarea1" rows="1"></textarea>
+                      </div>
                       </td>
                     </tr>
 
